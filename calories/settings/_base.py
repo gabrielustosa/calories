@@ -51,6 +51,8 @@ INSTALLED_APPS = [
 
     # my apps
     'calories.apps.user',
+    'calories.apps.core',
+    'calories.apps.calorie',
 ]
 
 MIDDLEWARE = [
