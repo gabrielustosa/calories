@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from calories.apps.calorie.models import DayMeal, Food, Meal
+
+admin.site.register(DayMeal)
+admin.site.register(Food)
+admin.site.register(Meal)

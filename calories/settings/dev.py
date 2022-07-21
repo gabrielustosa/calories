@@ -5,9 +5,7 @@ WEBSITE_URL = 'http://127.0.0.1:8000/'
 ALLOW_REGISTRATION = True
 
 INSTALLED_APPS.extend([
-    'tailwind',
     'django_browser_reload',
-    'theme',
 ])
 
 MIDDLEWARE.extend([

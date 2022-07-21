@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # 3rd apps
     'crispy_forms',
     'crispy_tailwind',
+    'tailwind',
+    'theme',
 
     # my apps
     'calories.apps.user',
