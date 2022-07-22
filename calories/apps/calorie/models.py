@@ -44,8 +44,21 @@ class FoodMeal(models.Model):
 
 
 class Meal(CreatorBase):
+    ICONS = (
+        ('Apple', 'Apple'),
+        ('Carrot', 'Carrot'),
+        ('Egg', 'Egg'),
+        ('Lemon', 'Lemon'),
+        ('Bacon', 'Bacon'),
+        ('Chicken', 'Chicken'),
+        ('Cheese', 'Cheese'),
+        ('Cookie', 'Cookie'),
+        ('Fish', 'Fish'),
+        ('Burger', 'Burger'),
+    )
     name = models.CharField(max_length=100)
     horario = models.TimeField()
+    icon = models.CharField(max_length=100, choices=ICONS)
 
 
 class DayMeal(CreatorBase, TimeStampedBase):

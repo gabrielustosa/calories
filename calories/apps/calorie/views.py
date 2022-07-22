@@ -32,3 +32,7 @@ def meal_view(request):
         meals.append(today_meal)
 
     return render(request, 'calorie/includes/meal_view.html', context={'meals': meals})
+
+
+def add_meal_view(request):
+    return render(request, 'calorie/includes/add_meal.html')

@@ -1,6 +1,5 @@
 import pytest
 
-from calories.apps.calorie.views import home_view
 from calories.tests.base import TestCustomBase
 
 
