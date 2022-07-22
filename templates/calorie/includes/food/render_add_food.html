@@ -1,0 +1,14 @@
+{% load i18n tailwind_filters %}
+
+<h1 class="text-2xl font-bold py-2">{% trans 'Digite a comida' %}</h1>
+<form class="input-group relative flex w-full my-4">
+    <input type="search" name="search"
+           class="form-control relative flex-auto min-w-0 block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+           placeholder="{% trans 'Pesquisar' %}" aria-label="Search" aria-describedby="button-addon2">
+    <button hx-post="{% url 'calorie:food_search' %}" hx-target="#food-list"
+            class="py-1.5 px-4 bg-sky-700 text-white text-center">
+        <i class="bi bi-search"></i>
+    </button>
+</form>
+<div id="food-list">
+</div>

@@ -12,6 +12,7 @@ Django==4.0.6
 django-browser-reload==1.6.0
 django-tailwind==3.3.0
 fatsecret==0.4.0
+rauth
 iniconfig==1.1.1
 kombu==5.2.4
 packaging==21.3

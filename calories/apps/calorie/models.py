@@ -57,8 +57,33 @@ class Meal(CreatorBase):
         ('Burger', 'Burger'),
     )
     name = models.CharField(max_length=100)
-    horario = models.TimeField()
+    time = models.TimeField()
     icon = models.CharField(max_length=100, choices=ICONS)
+
+    def get_icon(self):
+        icon = ''
+
+        if self.icon == 'Apple':
+            icon = '<i class="fa-solid fa-apple-whole"></i>'
+        elif self.icon == 'Carrot':
+            icon = '<i class="fa-solid fa-carrot"></i>'
+        elif self.icon == 'Egg':
+            icon = '<i class="bi bi-egg-fried"></i>'
+        elif self.icon == 'Lemon':
+            icon = '<i class="fa-solid fa-lemon"></i>'
+        elif self.icon == 'Bacon':
+            icon = '<i class="fa-solid fa-bacon"></i>'
+        elif self.icon == 'Chicken':
+            icon = '<i class="fa-solid fa-drumstick-bite"></i>'
+        elif self.icon == 'Cheese':
+            icon = '<i class="fa-solid fa-cheese"></i>'
+        elif self.icon == 'Cookie':
+            icon = '<i class="fa-solid fa-cookie"></i>'
+        elif self.icon == 'Fish':
+            icon = '<i class="fa-solid fa-fish-fins"></i>'
+        elif self.icon == 'Burger':
+            icon = '<i class="fa-solid fa-burger"></i>'
+        return icon
 
 
 class DayMeal(CreatorBase, TimeStampedBase):

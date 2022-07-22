@@ -14,6 +14,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from fatsecret import Fatsecret
+
 from utils.environment import parse_comma_sep_str_to_list
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -62,6 +64,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'calories.apps.core.middleware.ThreadLocalMiddleware',
 ]
 
 ROOT_URLCONF = 'calories.urls'

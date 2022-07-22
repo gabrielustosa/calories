@@ -3,7 +3,19 @@
 <h1 class="text-2xl font-bold dark:text-white pl-5">
     {% trans 'Escolha a refeição' %}
 </h1>
-<button class="rounded-lg bg-sky-700 text-white m-3 py-1 px-3">
+<button class="rounded-lg bg-sky-700 text-white m-3 py-1 px-3"
+        hx-get="{% url 'calorie:render_create_meal' %}"
+        hx-target="#content">
     <i class="bi bi-plus-lg"></i>
     {% trans 'Criar refeição' %}
 </button>
+<div class="flex space-x-10 py-5">
+    {% for meal in meals %}
+        <div class="p-5 bg-gray-200 rounded-lg cursor-pointer space-x-3 text-xl"
+             hx-get="{% url 'calorie:render_add_food' meal.id %}"
+             hx-target="#content">
+            <span>{{ meal.get_icon|safe }}</span>
+            <span>{{ meal.name }}</span>
+        </div>
+    {% endfor %}
+</div>

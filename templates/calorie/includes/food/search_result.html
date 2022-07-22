@@ -1,0 +1,9 @@
+{% for food in foods %}
+    <div class="p-4 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600"
+         hx-post="{% url 'calorie:add_food' day_meal.id %}" hx-target="#content">
+        <h1 class="font-bold text-xl">{{ food.food_name }}</h1>
+        <div>
+            {{ food.food_description }}
+        </div>
+    </div>
+{% endfor %}
