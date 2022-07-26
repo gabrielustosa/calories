@@ -6,7 +6,6 @@ from calories.apps.core.models import CreatorBase, TimeStampedBase
 
 class Food(models.Model):
     name = models.CharField(max_length=100)
-    amount_g = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     calories = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     carbohydrate = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     protein = models.DecimalField(max_digits=5, decimal_places=2, null=True)
@@ -61,29 +60,30 @@ class Meal(CreatorBase):
     icon = models.CharField(max_length=100, choices=ICONS)
 
     def get_icon(self):
-        icon = ''
+        icon_class = ''
 
         if self.icon == 'Apple':
-            icon = '<i class="fa-solid fa-apple-whole"></i>'
+            icon_class = 'fa-solid fa-apple-whole'
         elif self.icon == 'Carrot':
-            icon = '<i class="fa-solid fa-carrot"></i>'
+            icon_class = 'fa-solid fa-carrot'
         elif self.icon == 'Egg':
-            icon = '<i class="bi bi-egg-fried"></i>'
+            icon_class = 'bi bi-egg-fried'
         elif self.icon == 'Lemon':
-            icon = '<i class="fa-solid fa-lemon"></i>'
+            icon_class = 'fa-solid fa-lemon'
         elif self.icon == 'Bacon':
-            icon = '<i class="fa-solid fa-bacon"></i>'
+            icon_class = 'fa-solid fa-bacon'
         elif self.icon == 'Chicken':
-            icon = '<i class="fa-solid fa-drumstick-bite"></i>'
+            icon_class = 'fa-solid fa-drumstick-bite'
         elif self.icon == 'Cheese':
-            icon = '<i class="fa-solid fa-cheese"></i>'
+            icon_class = 'fa-solid fa-cheese'
         elif self.icon == 'Cookie':
-            icon = '<i class="fa-solid fa-cookie"></i>'
+            icon_class = 'fa-solid fa-cookie'
         elif self.icon == 'Fish':
-            icon = '<i class="fa-solid fa-fish-fins"></i>'
+            icon_class = 'fa-solid fa-fish-fins'
         elif self.icon == 'Burger':
-            icon = '<i class="fa-solid fa-burger"></i>'
-        return icon
+            icon_class = 'fa-solid fa-burger'
+
+        return f'<i class="{icon_class}"></i>'
 
 
 class DayMeal(CreatorBase, TimeStampedBase):

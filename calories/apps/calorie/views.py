@@ -8,7 +8,8 @@ from django.db.models import Count
 from django.forms import modelform_factory
 from django.shortcuts import render
 
-from calories.apps.calorie.models import DayMeal, Meal
+from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal
+from utils.food import parse_food_result
 
 fat_secret = Fatsecret(os.environ.get('CONSUMER_KEY'), os.environ.get('CONSUMER_SECRET'))
 
@@ -60,7 +61,7 @@ def create_meal_view(request):
     return meal_view(request)
 
 
-def render_add_food_view(request, meal_id):
+def render_search_food_view(request, meal_id):
     today = date.today()
     meal = Meal.objects.filter(id=meal_id).first()
 
@@ -72,15 +73,47 @@ def render_add_food_view(request, meal_id):
         meal=meal,
     ).first()
 
-    return render(request, 'calorie/includes/food/render_add_food.html', context={'day_meal': day_meal})
+    return render(request, 'calorie/includes/food/render_search_food.html', context={'day_meal': day_meal})
 
 
-def food_search_view(request):
+def food_search_view(request, meal_id):
     search_term = request.POST.get('search')
 
     foods = fat_secret.foods_search(search_term)
-    return render(request, 'calorie/includes/food/search_result.html', context={'foods': foods})
+    return render(request, 'calorie/includes/food/search_result.html', context={'foods': foods, 'meal_id': meal_id})
 
 
-def add_food_view(request):
-    return render(request, 'calorie/includes/food/add_food.html')
+def render_food_unity(request, food_id, meal_id):
+    return render(request, 'includes/modal/food_unity_body.html', context={'food_id': food_id, 'meal_id': meal_id})
+
+
+def add_food_view(request, food_id, meal_id):
+    day_meal = DayMeal.objects.filter(id=meal_id).first()
+
+    food_query = Food.objects.filter(id=food_id)
+
+    serving_unity = request.POST.get('serving_unit')
+    serving_amount = request.POST.get('serving_amount')
+
+    if food_query.exists():
+        food = food_query.first()
+    else:
+        food_info = fat_secret.food_get_v2(food_id)
+
+        food_result = parse_food_result(food_info, serving_unity=serving_unity)
+        food_result['id'] = food_id
+
+        if not food_result:
+            return render_search_food_view(request, day_meal.meal.id)
+
+        food = Food.objects.create(**food_result)
+
+    food_meal = FoodMeal.objects.create(
+        serving_unit=serving_unity.upper(),
+        serving_amount=serving_amount,
+        food=food,
+    )
+
+    day_meal.foods.add(food_meal)
+
+    return render_search_food_view(request, day_meal.meal.id)
