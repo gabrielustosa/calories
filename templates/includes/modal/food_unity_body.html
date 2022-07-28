@@ -37,7 +37,8 @@
                 <input type="text" id="amount" name="serving_amount"
                        class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs">
             </div>
-            <button modal-close type="submit" class="p-2 text-white bg-sky-600 rounded-lg w-full">
+            <button modal-close type="submit" class="p-2 text-white bg-sky-600 rounded-lg w-full"
+                    _="on click call updateFood(#units.value, #amount.value)">
                 {% trans 'Adicionar' %}
             </button>
         </form>

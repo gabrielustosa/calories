@@ -2,6 +2,7 @@ import os
 
 from datetime import date
 
+from django.http import JsonResponse
 from fatsecret import Fatsecret
 
 from django.contrib.auth.decorators import login_required
@@ -9,7 +10,7 @@ from django.db.models import F, Sum
 from django.forms import modelform_factory
 from django.shortcuts import render
 
-from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal
+from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, Goal, DayGoal
 from utils.food import parse_food_result, get_food_calories
 
 fat_secret = Fatsecret(os.environ.get('CONSUMER_KEY'), os.environ.get('CONSUMER_SECRET'))
@@ -41,7 +42,30 @@ def home_view(request):
 
     total_calories = sum([get_food_calories(meal) for meal in meals])
 
-    return render(request, 'calorie/home.html', context={'total_calories': total_calories})
+    goal = Goal.objects.filter(creator=request.user).first()
+
+    goal_info = dict()
+    if goal:
+        day_goal_query = DayGoal.objects.filter(
+            creator=request.user,
+            created__year=today.year,
+            created__month=today.month,
+            created__day=today.day,
+        )
+
+        if day_goal_query.exists():
+            day_goal = day_goal_query.first()
+        else:
+            day_goal = DayGoal.objects.create()
+
+        options = ('protein', 'carbohydrate', 'fat')
+        for option in options:
+            goal_info[f'#{option}'] = [getattr(day_goal, option), getattr(goal, option)]
+
+    return render(request, 'calorie/home.html', context={
+        'total_calories': total_calories,
+        'goal_info': goal_info,
+    })
 
 
 def meal_view(request):
@@ -71,11 +95,10 @@ def render_create_meal_view(request):
 
 
 def create_meal_view(request):
-    name = request.POST.get('name')
-    time = request.POST.get('time')
-    icon = request.POST.get('icon')
+    items = request.POST.dict()
+    del items['csrfmiddlewaretoken']
 
-    Meal.objects.create(name=name, time=time, icon=icon)
+    Meal.objects.create(**items)
 
     return meal_view(request)
 
@@ -141,5 +164,58 @@ def add_food_view(request, meal_id):
 
     return render_search_food_view(request, day_meal.meal.id)
 
-def teste():
-    pass
+
+def render_create_goal_view(request):
+    form = modelform_factory(Goal, fields=('protein', 'carbohydrate', 'fat'))
+    return render(request, 'calorie/includes/goal/create_goal.html', context={'form': form})
+
+
+def create_goal_view(request):
+    today = date.today()
+
+    goal_query = Goal.objects.filter(creator=request.user)
+    if goal_query.exists():
+        goal_query.delete()
+
+    items = request.POST.dict()
+    del items['csrfmiddlewaretoken']
+
+    Goal.objects.create(**items)
+
+    day_goal_query = DayGoal.objects.filter(
+        creator=request.user,
+        created__year=today.year,
+        created__month=today.month,
+        created__day=today.day,
+    )
+
+    if not day_goal_query.exists():
+        DayGoal.objects.create()
+
+    return meal_view(request)
+
+
+def get_food_nutritional_values(request, food_id):
+    food = Food.objects.filter(id=food_id).first()
+
+    options = ('protein', 'carbohydrate', 'fat', 'calories')
+
+    amount = int(request.GET.get('amount'))
+
+    result = dict()
+    for option in options:
+        food_nutrient = getattr(food, option)
+        food_amount = food.number_of_units
+        multiplier = amount / food_amount
+        total = multiplier * food_nutrient
+
+        result[option] = total
+
+    day_goal = DayGoal.objects.filter(creator=request.user).first()
+
+    for key, value in result.items():
+        setattr(day_goal, key, value)
+
+    day_goal.save()
+
+    return JsonResponse(result)

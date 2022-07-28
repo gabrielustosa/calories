@@ -6,27 +6,27 @@ from calories.apps.core.models import CreatorBase, TimeStampedBase
 class Food(models.Model):
     food_id = models.PositiveBigIntegerField()
     food_name = models.CharField(max_length=100)
-    calories = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    protein = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    fat = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    saturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    polyunsaturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    monounsaturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    trans_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    cholesterol = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    sodium = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    potassium = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    fiber = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    sugar = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    added_sugars = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    vitamin_d = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    vitamin_a = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    vitamin_c = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    calcium = models.DecimalField(max_digits=15, decimal_places=2, null=True)
-    iron = models.DecimalField(max_digits=15, decimal_places=2, null=True)
+    calories = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    protein = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    saturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    polyunsaturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    monounsaturated_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    trans_fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    cholesterol = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    sodium = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    potassium = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    fiber = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    sugar = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    added_sugars = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    vitamin_d = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    vitamin_a = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    vitamin_c = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    calcium = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    iron = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     measurement_description = models.CharField(max_length=100)
-    number_of_units = models.DecimalField(max_digits=15, decimal_places=2)
+    number_of_units = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
 
 class FoodMeal(models.Model):
@@ -88,3 +88,15 @@ class DayMeal(CreatorBase, TimeStampedBase):
         on_delete=models.CASCADE
     )
     foods = models.ManyToManyField(FoodMeal)
+
+
+class Goal(CreatorBase):
+    protein = models.PositiveIntegerField(default=0)
+    carbohydrate = models.PositiveIntegerField(default=0)
+    fat = models.PositiveIntegerField(default=0)
+
+
+class DayGoal(TimeStampedBase, CreatorBase):
+    protein = models.PositiveIntegerField(default=0)
+    carbohydrate = models.PositiveIntegerField(default=0)
+    fat = models.PositiveIntegerField(default=0)
