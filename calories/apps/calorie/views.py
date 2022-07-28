@@ -32,10 +32,7 @@ def home_view(request):
         )
 
         if meal_query.exists():
-            today_meal = meal_query.annotate(
-                total_calories=Sum(
-                    (F('foods__serving_amount') / F('foods__food__number_of_units')) * F('foods__food__calories'))
-            ).first()
+            today_meal = meal_query.first()
         else:
             today_meal = DayMeal.objects.create(meal=meal)
         meals.append(today_meal)
@@ -162,6 +159,19 @@ def add_food_view(request, meal_id):
 
     day_meal.foods.add(food_meal)
 
+    day_goal = DayGoal.objects.filter(creator=request.user).first()
+
+    options = ('protein', 'carbohydrate', 'fat')
+
+    for option in options:
+        food_nutrient = getattr(food, option)
+        food_amount = food.number_of_units
+        multiplier = int(serving_amount) / food_amount
+        total = (multiplier * food_nutrient) + getattr(day_goal, option)
+        setattr(day_goal, option, total)
+
+    day_goal.save()
+
     return render_search_food_view(request, day_meal.meal.id)
 
 
@@ -210,12 +220,5 @@ def get_food_nutritional_values(request, food_id):
         total = multiplier * food_nutrient
 
         result[option] = total
-
-    day_goal = DayGoal.objects.filter(creator=request.user).first()
-
-    for key, value in result.items():
-        setattr(day_goal, key, value)
-
-    day_goal.save()
 
     return JsonResponse(result)

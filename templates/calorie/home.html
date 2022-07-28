@@ -26,7 +26,8 @@
 {% block content %}
     <div class="py-3">
         <ul class="flex justify-center text-xl font-bold text-gray-800 cursor-pointer dark:text-white">
-            <li class="hover:opacity-70 p-2 rounded-md">
+            <li class="hover:opacity-70 p-2 rounded-md"
+                hx-get="{% url 'calorie:meal_view' %}" hx-target="#content">
                 <i class="fa-solid fa-apple-whole pr-2"></i>
                 {% trans 'Refeições' %}
             </li>
@@ -89,7 +90,7 @@
                         </div>
                     </div>
                 </div>
-                <button class="my-7 mx-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
+                <button class="m-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
                         hx-get="{% url 'calorie:render_create_goal' %}" hx-target="#content">
                     {% trans 'Nova meta' %}
                 </button>
