@@ -85,7 +85,7 @@
                 <div class="centered flex flex-col text-center dark:text-white">
                     <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
                     <span class="text-lg font-medium">Calorias</span>
-                    <span class="text-sm">192/1800</span>
+                    <span id="text-calorie" class="text-sm">192/1800</span>
                 </div>
             </div>
             <div class="relative">
@@ -119,7 +119,7 @@
 
 {% block javascript %}
     <script>
-        function setProgress(element, percent) {
+        function setProgress(element, percent, total) {
             let circle = document.querySelector(element);
             let radius = circle.r.baseVal.value;
             let circumference = radius * 2 * Math.PI;
@@ -128,12 +128,18 @@
             circle.style.strokeDashoffset = `${circumference}`;
 
 
-            let total = 1800
             circle.style.strokeDashoffset = circumference - percent / total * circumference;
         }
 
-        setProgress('#calorie-circle', parseInt('{{ total_calories }}'));
-        setProgress('#water-circle', 500)
+        function setProgressText(element, current, total) {
+            let text_element = document.querySelector(element);
+            text_element.innerText = `${current}/${total}`
+        }
+
+        setProgress('#calorie-circle', {{ total_calories|floatformat:'0' }}, {{ user.max_calories }});
+        setProgress('#water-circle', 500, 1000)
+
+        setProgressText('#text-calorie', {{ total_calories|floatformat:'0' }}, {{ user.max_calories }})
     </script>
     <script>
         htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content')
