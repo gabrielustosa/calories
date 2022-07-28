@@ -29,6 +29,7 @@ def home_view(request):
             created__day=today.day,
             meal=meal,
         )
+
         if meal_query.exists():
             today_meal = meal_query.annotate(
                 total_calories=Sum(
@@ -139,3 +140,6 @@ def add_food_view(request, meal_id):
     day_meal.foods.add(food_meal)
 
     return render_search_food_view(request, day_meal.meal.id)
+
+def teste():
+    pass
