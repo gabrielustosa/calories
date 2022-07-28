@@ -19,15 +19,14 @@
             <div class="my-4">
                 <label for="units"
                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    {% trans 'Selecione uma opção' %}
+                    {% trans 'Selecione uma medida' %}
                 </label>
                 <select id="units"
                         name="serving_unit"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    <option value="g">{% trans 'Grama' %}</option>
-                    <option value="kg">{% trans 'Kilo' %}</option>
-                    <option value="l">{% trans 'Litro' %}</option>
-                    <option value="ml">{% trans 'Mililitro' %}</option>
+                    {% for measurement in measurements %}
+                        <option value="{{ measurement }}">{{ measurement }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="my-4">

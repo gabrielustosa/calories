@@ -4,3 +4,4 @@ coverage
 selenium
 faker
 factory_boy
+ipython

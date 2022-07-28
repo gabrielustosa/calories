@@ -84,29 +84,32 @@ def food_search_view(request, meal_id):
 
 
 def render_food_unity(request, food_id, meal_id):
-    return render(request, 'includes/modal/food_unity_body.html', context={'food_id': food_id, 'meal_id': meal_id})
+    if not Food.objects.filter(food_id=food_id).exists():
+        food_info = fat_secret.food_get_v2(food_id)
+
+        food_result = parse_food_result(food_info)
+
+        for food in food_result:
+            Food.objects.create(**food)
+
+    foods = Food.objects.filter(food_id=food_id)
+
+    measurements = [food.measurement_description for food in foods.all()]
+
+    return render(request, 'includes/modal/food_unity_body.html', context={
+        'food_id': food_id,
+        'meal_id': meal_id,
+        'measurements': measurements,
+    })
 
 
 def add_food_view(request, food_id, meal_id):
     day_meal = DayMeal.objects.filter(id=meal_id).first()
 
-    food_query = Food.objects.filter(id=food_id)
+    food = Food.objects.filter(id=food_id).first()
 
     serving_unity = request.POST.get('serving_unit')
     serving_amount = request.POST.get('serving_amount')
-
-    if food_query.exists():
-        food = food_query.first()
-    else:
-        food_info = fat_secret.food_get_v2(food_id)
-
-        food_result = parse_food_result(food_info, serving_unity=serving_unity)
-        food_result['id'] = food_id
-
-        if not food_result:
-            return render_search_food_view(request, day_meal.meal.id)
-
-        food = Food.objects.create(**food_result)
 
     food_meal = FoodMeal.objects.create(
         serving_unit=serving_unity.upper(),
