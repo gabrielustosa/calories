@@ -15,17 +15,17 @@
 </div>
 <div class="p-3 space-y-6">
     <div class="px-8">
-        <form hx-post="{% url 'calorie:add_food' food_id meal_id %}" hx-target="#content">
+        <form hx-post="{% url 'calorie:add_food' meal_id %}" hx-target="#content">
             <div class="my-4">
                 <label for="units"
                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                     {% trans 'Selecione uma medida' %}
                 </label>
                 <select id="units"
-                        name="serving_unit"
+                        name="serving"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    {% for measurement in measurements %}
-                        <option value="{{ measurement }}">{{ measurement }}</option>
+                    {% for id, measurement in food_info.items %}
+                        <option value="{{ measurement }}|!{{ id }}">{{ measurement }}</option>
                     {% endfor %}
                 </select>
             </div>

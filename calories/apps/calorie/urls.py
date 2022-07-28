@@ -12,7 +12,7 @@ urlpatterns = [
     path('meal/create/', views.create_meal_view, name='create_meal'),
 
     path('food/render/search/<int:meal_id>', views.render_search_food_view, name='render_search_food'),
-    path('food/add/<int:food_id>/<int:meal_id>/', views.add_food_view, name='add_food'),
+    path('food/add/<int:meal_id>/', views.add_food_view, name='add_food'),
     path('food/search/<int:meal_id>/', views.food_search_view, name='food_search'),
     path('food/render/unity/<int:food_id>/<int:meal_id>/', views.render_food_unity, name='render_food_unity'),
 ]

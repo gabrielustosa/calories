@@ -128,12 +128,12 @@
             circle.style.strokeDashoffset = `${circumference}`;
 
 
-            let total = 14
+            let total = 1800
             circle.style.strokeDashoffset = circumference - percent / total * circumference;
         }
 
-        setProgress('#calorie-circle', 13);
-        setProgress('#water-circle', 3)
+        setProgress('#calorie-circle', parseInt('{{ total_calories }}'));
+        setProgress('#water-circle', 500)
     </script>
     <script>
         htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content')

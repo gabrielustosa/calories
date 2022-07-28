@@ -19,9 +19,9 @@ def parse_food_result(food_dict: Dict):
 
     for serving in food_serving:
         food_info = dict()
-        for nutricional, nutricional_value in serving.items():
-            if nutricional in nutritional_info:
-                food_info[nutricional] = nutricional_value
+        for nutritional, nutritional_value in serving.items():
+            if nutritional in nutritional_info:
+                food_info[nutritional] = nutritional_value
         result.append(food_info)
 
     for food in result:
@@ -29,3 +29,12 @@ def parse_food_result(food_dict: Dict):
         food['food_id'] = food_dict['food_id']
 
     return result
+
+
+def get_food_calories(food):
+    try:
+        total = food.total_calories
+
+        return total
+    except AttributeError:
+        return 0

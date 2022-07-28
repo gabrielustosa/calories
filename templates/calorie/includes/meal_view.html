@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n calorie_filter %}
 
 <h1 class="text-2xl font-bold dark:text-white pl-5">
     {% trans 'Refeições' %} - {% now "j F Y" %}
@@ -23,7 +23,8 @@
                     </span>
                     <span class="flex space-x-5 text-gray-800">
                     <span class="text-sm text-black">
-                        {{ day.total_calories|default:0 }} <span class="font-bold">{% trans 'Calorias' %}</span>
+                        {{ day.total_calories|default:0|floatformat:'0' }} <span
+                            class="font-bold">{% trans 'Calorias' %}</span>
                     </span>
                         <svg data-accordion-icon class="w-6 h-6 rotate-180 shrink-0" fill="currentColor"
                              viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -38,17 +39,17 @@
                  aria-labelledby="accordion-collapse-heading-{{ forloop.counter0 }}">
                 {% for meal_food in day.foods.all %}
                     {% with food=meal_food.food %}
-                        <div class="p-3 m-2 bg-white rounded-lg flex justify-between items-center cursor-pointer">
+                        <div class="flex justify-between p-3 m-2 bg-white rounded-lg cursor-pointer">
                             <div class="p-2">
-                                <h1 class="text-lg font-bold">{{ food.name }}</h1>
-                                <p>{{ food.serving_amount }} {{ food.serving_unit }}</p>
-                            </div>
-                            <div class="text-gray-400">
-                                {% trans 'Clique para ver mais informações' %}
+                                <h1 class="text-lg font-bold">{{ food.food_name }}</h1>
+                                <p>{{ meal_food.serving_amount|floatformat:'0' }} {{ food.measurement_description }}</p>
+                                <div class="text-gray-400 text-sm py-3">
+                                    {% trans 'Clique para ver mais informações' %}
+                                </div>
                             </div>
                             <div class="p-2 flex flex-col justify-center text-center space-y-2">
                                 <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
-                                <span>{{ food.calories }}</span>
+                                <span>{{ meal_food|get_nutrient_value:'calories'|floatformat:'0' }}</span>
                             </div>
                         </div>
                     {% endwith %}
