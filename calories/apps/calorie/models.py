@@ -4,7 +4,7 @@ from calories.apps.core.models import CreatorBase, TimeStampedBase
 
 
 class Food(models.Model):
-    food_id = models.PositiveBigIntegerField()
+    food_id = models.CharField(max_length=250)
     food_name = models.CharField(max_length=100)
     calories = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)

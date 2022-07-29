@@ -18,7 +18,7 @@
         {% create_dict "{'calories': 'Calorias', 'protein': 'Proteínas', 'carbohydrate': 'Carboidratos'}" as nutritional_values %}
         <h1 class="py-5 text-xl font-bold">
             {% trans 'Informações para ' %}
-            {{ meal_food.serving_amount|floatformat:'0' }}{{ meal_food.food.measurement_description }}
+            {{ meal_food.serving_amount|floatformat:'0' }} {{ meal_food.food.measurement_description }}
         </h1>
         <div class="flex justify-center space-x-8 pb-8">
             {% for key, value in nutritional_values.items %}

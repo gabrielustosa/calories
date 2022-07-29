@@ -40,11 +40,11 @@
                 {% for meal_food in day.foods.all %}
                     {% with food=meal_food.food %}
                         <div class="flex justify-between p-3 m-2 bg-white rounded-lg cursor-pointer">
-                            <div class="p-2">
+                            <div class="p-2"
+                                 hx-get="{% url 'calorie:food_info' meal_food.id %}" hx-target="#modal-body">
                                 <h1 class="text-lg font-bold">{{ food.food_name }}</h1>
                                 <p>{{ meal_food.serving_amount|floatformat:'0' }} {{ food.measurement_description }}</p>
-                                <div class="text-gray-400 text-sm py-3"
-                                     hx-get="{% url 'calorie:food_info' meal_food.id %}" hx-target="#modal-body">
+                                <div class="text-gray-400 text-sm py-3">
                                     {% trans 'Clique para ver mais informações' %}
                                 </div>
                             </div>
