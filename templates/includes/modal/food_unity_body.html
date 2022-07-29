@@ -25,7 +25,7 @@
                         name="serving"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% for id, measurement in food_info.items %}
-                        <option value="{{ measurement }}|!{{ id }}">{{ measurement }}</option>
+                        <option value="{{ id }}">{{ measurement }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -38,7 +38,7 @@
                        class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs">
             </div>
             <button modal-close type="submit" class="p-2 text-white bg-sky-600 rounded-lg w-full"
-                    _="on click call updateFood(#units.value, #amount.value)">
+                    _="on click wait 200ms then call updateFood(#units.value, #amount.value)">
                 {% trans 'Adicionar' %}
             </button>
         </form>

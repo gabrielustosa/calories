@@ -17,7 +17,7 @@ def add_food_view(request, meal_id):
 
     day_meal = DayMeal.objects.filter(id=meal_id).first()
 
-    serving_unity, food_id = request.POST.get('serving').split('|!')
+    food_id = request.POST.get('serving')
     serving_amount = request.POST.get('serving_amount')
 
     food = Food.objects.filter(id=food_id).first()
@@ -104,12 +104,20 @@ def render_food_unity(request, food_id, meal_id):
         'food_id': food_id,
         'meal_id': meal_id,
         'food_info': food_info,
-        'first_food': list(food_info.keys())[0]
     })
 
 
 def get_food_nutritional_values(request, food_id):
+    today = date.today()
+
     food = Food.objects.filter(id=food_id).first()
+
+    day_goal = DayGoal.objects.filter(
+        creator=request.user,
+        created__year=today.year,
+        created__month=today.month,
+        created__day=today.day,
+    ).first()
 
     options = ('protein', 'carbohydrate', 'fat', 'calories')
 
@@ -126,6 +134,13 @@ def get_food_nutritional_values(request, food_id):
         total = multiplier * food_nutrient
 
         result[option] = total
+
+        if day_goal:
+            result[f'current-{option}'] = getattr(day_goal, option)
+
+            goal = Goal.objects.filter(creator=request.user).last()
+
+            result[f'total-{option}'] = getattr(goal, option)
 
     return JsonResponse(result)
 
