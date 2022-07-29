@@ -39,13 +39,16 @@ def home_view(request):
         meals.append(today_meal)
 
     total_calories = sum(filter(None, [get_food_calories(meal) for meal in meals]))
+    max_calories = request.user.max_calories
 
-    goal = Goal.objects.filter(creator=request.user).first()
+    goal = Goal.objects.filter(creator=request.user).last()
 
-    options = ('protein', 'carbohydrate', 'fat')
+    options = ('protein', 'carbohydrate', 'fat', 'calories')
 
     goal_info = dict()
     if goal:
+        max_calories = goal.calories
+
         day_goal_query = DayGoal.objects.filter(
             creator=request.user,
             created__year=today.year,
@@ -56,7 +59,7 @@ def home_view(request):
         if day_goal_query.exists():
             day_goal = day_goal_query.first()
         else:
-            day_goal = DayGoal.objects.create()
+            day_goal = DayGoal.objects.create(goal=goal)
 
         for option in options:
             goal_info[f'#{option}'] = [getattr(day_goal, option), getattr(goal, option)]
@@ -68,4 +71,5 @@ def home_view(request):
     return render(request, 'calorie/home.html', context={
         'total_calories': total_calories,
         'goal_info': goal_info,
+        'max_calories': max_calories,
     })

@@ -37,7 +37,7 @@ def add_food_view(request, meal_id):
     ).first()
 
     if day_goal:
-        options = ('protein', 'carbohydrate', 'fat')
+        options = ('protein', 'carbohydrate', 'fat', 'calories')
 
         for option in options:
             food_nutrient = getattr(food, option)
@@ -71,18 +71,17 @@ def food_search_view(request, meal_id):
 
     foods = fat_secret.foods_search(search_term)
 
-    custom_foods = Food.objects.filter(food_id__regex=r'^[a-zA-Z].*$', food_name__icontains=search_term)
+    custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
 
-    if custom_foods.exists():
-        for custom_food in custom_foods.all():
-            food_description = f'Per {custom_food.measurement_description} {custom_food.number_of_units} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
-            foods.append(
-                {
-                    'food_id': custom_food.food_id,
-                    'food_name': custom_food.food_name,
-                    'food_description': food_description,
-                }
-            )
+    for custom_food in custom_foods.all():
+        food_description = f'Per {custom_food.measurement_description} {custom_food.number_of_units} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
+        foods.append(
+            {
+                'food_id': custom_food.food_id,
+                'food_name': custom_food.food_name,
+                'food_description': food_description,
+            }
+        )
 
     return render(request, 'calorie/includes/food/search_result.html', context={'foods': foods, 'meal_id': meal_id})
 
@@ -146,16 +145,7 @@ def info_food_view(request, food_id):
 
 
 def render_create_food_view(request):
-    form = modelform_factory(Food, fields=(
-        'food_name', 'calories', 'carbohydrate',
-        'protein', 'fat', 'saturated_fat',
-        'polyunsaturated_fat', 'monounsaturated_fat', 'trans_fat',
-        'cholesterol', 'sodium', 'potassium',
-        'fiber', 'sugar', 'added_sugars',
-        'vitamin_d', 'vitamin_a', 'vitamin_c',
-        'calcium', 'iron', 'measurement_description',
-        'number_of_units',
-    ))
+    form = modelform_factory(Food, exclude=('food_id',))
     return render(request, 'calorie/includes/food/create_food.html', context={'form': form})
 
 

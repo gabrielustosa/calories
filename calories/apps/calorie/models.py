@@ -94,9 +94,15 @@ class Goal(CreatorBase):
     protein = models.PositiveIntegerField(default=0)
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
+    calories = models.PositiveIntegerField(default=0)
 
 
 class DayGoal(TimeStampedBase, CreatorBase):
     protein = models.PositiveIntegerField(default=0)
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
+    calories = models.PositiveIntegerField(default=0)
+    goal = models.ForeignKey(
+        Goal,
+        on_delete=models.CASCADE
+    )

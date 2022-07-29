@@ -2,7 +2,8 @@ from datetime import date
 
 from django.db.models import F, Sum
 from django.forms import modelform_factory
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 
 from calories.apps.calorie.models import DayMeal, Meal
 
@@ -39,4 +40,4 @@ def create_meal_view(request):
 
     Meal.objects.create(**items)
 
-    return meal_view(request)
+    return redirect(reverse('calorie:home'))

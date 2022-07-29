@@ -160,6 +160,12 @@
             circle.style.strokeDasharray = `${circumference} ${circumference}`;
             circle.style.strokeDashoffset = `${circumference}`;
 
+            if (percent > total) {
+                let textProgress = document.querySelector(`${element}-text`)
+                let difference = percent - total
+                textProgress.innerHTML = `<span class="text-red-500">${total}/${total} (+${difference})</span>`
+                percent = total
+            }
 
             circle.style.strokeDashoffset = circumference - percent / total * circumference;
         }
@@ -172,21 +178,25 @@
         function setProgressGoal(element, current, total) {
             let progress_element = document.querySelector(element)
 
+            if (current > total) {
+                let textProgress = document.querySelector(`${element}-text`)
+                let difference = current - total
+                textProgress.innerHTML = `<span class="text-red-500">${total}/${total} (+${difference})</span>`
+                current = total
+            }
+
             let value = (current * 100) / total
 
             progress_element.style.width = `${value}%`
         }
 
-
-        setProgress('#calories', {{ total_calories|floatformat:'0' }}, {{ user.max_calories }});
-        setProgress('#water-circle', 500, 1000)
-
-        setProgressText('#calories-text', {{ total_calories|floatformat:'0' }}, {{ user.max_calories }})
-
         {% for element, goal in goal_info.items %}
             setProgressText('{{ element }}-text', {{ goal.0 }}, {{ goal.1 }})
             setProgressGoal('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
         {% endfor %}
+
+        setProgress('#calories', {{ total_calories|floatformat:'0' }}, {{ max_calories }});
+        setProgress('#water-circle', 500, 1000)
 
         function updateFood(food, amount) {
             let food_id = food.split('|!')[1]
