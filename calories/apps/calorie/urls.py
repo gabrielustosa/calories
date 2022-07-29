@@ -16,6 +16,7 @@ urlpatterns = [
     path('food/search/<int:meal_id>/', views.food_search_view, name='food_search'),
     path('food/render/unity/<int:food_id>/<int:meal_id>/', views.render_food_unity, name='render_food_unity'),
     path('food/nutritional_value/<int:food_id>/', views.get_food_nutritional_values, name='get_nutritional_value'),
+    path('food/info/<int:food_id>/', views.info_food_view, name='food_info'),
 
     path('goal/render/create/', views.render_create_goal_view, name='render_create_goal'),
     path('goal/create/', views.create_goal_view, name='create_goal'),

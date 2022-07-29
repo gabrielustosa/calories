@@ -193,7 +193,11 @@
             fetch(`/food/nutritional_value/${food_id}?amount=${amount}`)
                 .then(response => response.json())
                 .then(response => {
-                    const options = ['protein', 'carbohydrate', 'fat', 'calories']
+                    let options = ['protein', 'carbohydrate', 'fat', 'calories']
+
+                    if (response['protein'] === undefined) {
+                        options = ['calories',]
+                    }
 
                     for (let option of options) {
                         let element_text = document.querySelector(`#${option}-text`)

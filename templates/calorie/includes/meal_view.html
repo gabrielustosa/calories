@@ -43,7 +43,8 @@
                             <div class="p-2">
                                 <h1 class="text-lg font-bold">{{ food.food_name }}</h1>
                                 <p>{{ meal_food.serving_amount|floatformat:'0' }} {{ food.measurement_description }}</p>
-                                <div class="text-gray-400 text-sm py-3">
+                                <div class="text-gray-400 text-sm py-3"
+                                     hx-get="{% url 'calorie:food_info' meal_food.id %}" hx-target="#modal-body">
                                     {% trans 'Clique para ver mais informações' %}
                                 </div>
                             </div>
