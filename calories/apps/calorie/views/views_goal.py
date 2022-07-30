@@ -1,11 +1,9 @@
-from datetime import date
-
 from django.forms import modelform_factory
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from calories.apps.calorie.models import NutritionalGoal, NutritionalDayGoal
-from utils.nutritional import get_user_day_nutrients
+from utils.nutritional import get_user_day_nutrients, get_nutritional_day_goal_query
 
 
 def render_create_goal_view(request):
@@ -14,8 +12,6 @@ def render_create_goal_view(request):
 
 
 def create_goal_view(request):
-    today = date.today()
-
     items = request.POST.dict()
     del items['csrfmiddlewaretoken']
 
@@ -26,13 +22,7 @@ def create_goal_view(request):
 
     goal = NutritionalGoal.objects.create(**items)
 
-    day_goal_query = NutritionalDayGoal.objects.filter(
-        creator=request.user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-        goal=goal,
-    )
+    day_goal_query = get_nutritional_day_goal_query(request.user, goal)
 
     if not day_goal_query.exists():
         day_goal = NutritionalDayGoal.objects.create(goal=goal)
@@ -48,20 +38,13 @@ def create_goal_view(request):
 
 
 def render_goal_nutritional_bar(request):
-    today = date.today()
     goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
 
     options = ('protein', 'carbohydrate', 'fat')
 
     goal_info = dict()
     if goal:
-        day_goal_query = NutritionalDayGoal.objects.filter(
-            creator=request.user,
-            created__year=today.year,
-            created__month=today.month,
-            created__day=today.day,
-            goal=goal,
-        )
+        day_goal_query = get_nutritional_day_goal_query(request.user, goal)
 
         if day_goal_query.exists():
             day_goal = day_goal_query.first()

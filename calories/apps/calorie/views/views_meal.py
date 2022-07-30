@@ -1,25 +1,13 @@
-from datetime import date
-
-from django.db.models import F, Sum
 from django.forms import modelform_factory
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from calories.apps.calorie.models import DayMeal, Meal
+from calories.apps.calorie.models import Meal
+from utils.nutritional import get_user_day_meals
 
 
 def meal_view(request):
-    today = date.today()
-
-    meals = DayMeal.objects.filter(
-        creator=request.user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-    ).annotate(
-        total_calories=Sum(
-            (F('foods__serving_amount') / F('foods__food__number_of_units')) * F('foods__food__calories'))
-    ).all()
+    meals = get_user_day_meals(request.user)
 
     return render(request, 'calorie/includes/meal/meal_view.html', context={'meals': meals})
 

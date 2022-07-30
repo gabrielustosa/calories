@@ -113,8 +113,8 @@
                     </svg>
                     <div class="centered flex flex-col text-center dark:text-white">
                         <i class="bi bi-droplet-fill text-xl"></i>
-                        <span class="text-lg font-medium">Água</span>
-                        <span class="text-sm">1ml/2.5L</span>
+                        <span class="text-lg font-medium">{% trans 'Água' %}</span>
+                        <span id="water-text" class="text-sm"></span>
                     </div>
                 </div>
             </div>
@@ -136,26 +136,21 @@
     </script>
     <script>
         function setProgress(element, percent, total) {
-            if (['#calories', '#water'].includes(element)) {
-                let circle = document.querySelector(element);
-                let radius = circle.r.baseVal.value;
-                let circumference = radius * 2 * Math.PI;
-
-                circle.style.strokeDasharray = `${circumference} ${circumference}`;
-                circle.style.strokeDashoffset = `${circumference}`;
-
-                if (percent > total) {
-                    percent = total
-                }
-
-                circle.style.strokeDashoffset = circumference - percent / total * circumference;
-                return
-            }
-
             let progress_element = document.querySelector(element)
 
             if (percent > total) {
                 percent = total
+            }
+
+            if (['#calories', '#water'].includes(element)) {
+                let radius = progress_element.r.baseVal.value;
+                let circumference = radius * 2 * Math.PI;
+
+                progress_element.style.strokeDasharray = `${circumference} ${circumference}`;
+                progress_element.style.strokeDashoffset = `${circumference}`;
+
+                progress_element.style.strokeDashoffset = circumference - percent / total * circumference;
+                return
             }
 
             let value = (percent * 100) / total
@@ -163,14 +158,14 @@
             progress_element.style.width = `${value}%`
         }
 
-        function setProgressText(element, current, total) {
+        function setProgressText(element, percent, total) {
             let text_element = document.querySelector(element);
-            if (current > total) {
-                let difference = current - total
+            if (percent > total) {
+                let difference = percent - total
                 text_element.innerHTML = `<span class="text-red-500">${total}/${total} (+${difference})</span>`
                 return
             }
-            text_element.innerText = `${current}/${total}`
+            text_element.innerText = `${percent}/${total}`
         }
 
         function updateFood(food, amount) {
@@ -194,6 +189,7 @@
         setProgress('#water', 500, 1000)
 
         setProgressText('#calories-text', {{ total_calories|floatformat:'0' }}, {{ max_calories }})
+        setProgressText('#water-text', 300, 100)
     </script>
     <script>
         const targetModal = document.querySelector('#modal');

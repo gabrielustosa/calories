@@ -2,7 +2,7 @@ from datetime import date
 
 from django.db.models import F, Sum
 
-from calories.apps.calorie.models import DayMeal, Meal
+from calories.apps.calorie.models import DayMeal, Meal, NutritionalDayGoal
 
 
 def get_user_day_meals(user):
@@ -12,13 +12,7 @@ def get_user_day_meals(user):
     meals = []
 
     for meal in user_meals.all():
-        meal_query = DayMeal.objects.filter(
-            creator=user,
-            created__year=today.year,
-            created__month=today.month,
-            created__day=today.day,
-            meal=meal,
-        ).prefetch_related('foods')
+        meal_query = get_meal_day_goal_query(user, meal).prefetch_related('foods')
 
         if meal_query.exists():
             today_meal = meal_query.annotate(
@@ -52,3 +46,27 @@ def get_nutrient_value(meal_food, name):
     food_amount = food.number_of_units
     multiplier = meal_food.serving_amount / food_amount
     return multiplier * food_nutrient
+
+
+def get_nutritional_day_goal_query(user, goal):
+    today = date.today()
+
+    return NutritionalDayGoal.objects.filter(
+        creator=user,
+        created__year=today.year,
+        created__month=today.month,
+        created__day=today.day,
+        goal=goal,
+    )
+
+
+def get_meal_day_goal_query(user, meal):
+    today = date.today()
+
+    return DayMeal.objects.filter(
+        creator=user,
+        created__year=today.year,
+        created__month=today.month,
+        created__day=today.day,
+        meal=meal,
+    )

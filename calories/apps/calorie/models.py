@@ -95,6 +95,7 @@ class NutritionalGoal(CreatorBase):
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
+    water = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
 
 
@@ -103,6 +104,7 @@ class NutritionalDayGoal(TimeStampedBase, CreatorBase):
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
+    water = models.PositiveIntegerField(default=0)
     goal = models.ForeignKey(
         NutritionalGoal,
         on_delete=models.CASCADE

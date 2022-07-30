@@ -1,19 +1,16 @@
-from datetime import date
-
 from django.forms import modelform_factory
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, NutritionalGoal, NutritionalDayGoal
+from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, NutritionalGoal
 from calories.apps.calorie.views.view import fat_secret
 from calories.apps.calorie.views.views_meal import meal_view
 from utils.food import parse_food_result
+from utils.nutritional import get_nutritional_day_goal_query, get_meal_day_goal_query
 from utils.utils import get_random_id
 
 
 def add_food_view(request, meal_id):
-    today = date.today()
-
     day_meal = DayMeal.objects.filter(id=meal_id).first()
 
     food_id = request.POST.get('serving')
@@ -28,12 +25,8 @@ def add_food_view(request, meal_id):
 
     day_meal.foods.add(food_meal)
 
-    day_goal = NutritionalDayGoal.objects.filter(
-        creator=request.user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-    ).first()
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
+    day_goal = get_nutritional_day_goal_query(request.user, goal).first()
 
     if day_goal:
         options = ('protein', 'carbohydrate', 'fat', 'calories')
@@ -51,16 +44,9 @@ def add_food_view(request, meal_id):
 
 
 def render_search_food_view(request, meal_id):
-    today = date.today()
     meal = Meal.objects.filter(id=meal_id).first()
 
-    day_meal = DayMeal.objects.filter(
-        creator=request.user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-        meal=meal,
-    ).first()
+    day_meal = get_meal_day_goal_query(request.user, meal).first()
 
     return render(request, 'calorie/includes/food/search_food.html', context={'day_meal': day_meal})
 
@@ -107,20 +93,14 @@ def render_food_unity(request, food_id, meal_id):
 
 
 def get_food_nutritional_values(request, food_id):
-    today = date.today()
-
     food = Food.objects.filter(id=food_id).first()
 
-    day_goal = NutritionalDayGoal.objects.filter(
-        creator=request.user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-    ).first()
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
+    day_goal = get_nutritional_day_goal_query(request.user, goal).first()
 
     options = ('protein', 'carbohydrate', 'fat', 'calories')
 
-    if not NutritionalGoal.objects.filter(creator=request.user, active=True).exists():
+    if not goal:
         options = ('calories',)
 
     amount = int(request.GET.get('amount'))
@@ -136,8 +116,6 @@ def get_food_nutritional_values(request, food_id):
 
         if day_goal:
             result[f'current-{option}'] = getattr(day_goal, option)
-
-            goal = day_goal.goal
 
             result[f'total-{option}'] = getattr(goal, option)
 
