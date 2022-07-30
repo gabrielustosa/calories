@@ -90,19 +90,20 @@ class DayMeal(CreatorBase, TimeStampedBase):
     foods = models.ManyToManyField(FoodMeal)
 
 
-class Goal(CreatorBase):
+class NutritionalGoal(CreatorBase):
     protein = models.PositiveIntegerField(default=0)
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
+    active = models.BooleanField(default=True)
 
 
-class DayGoal(TimeStampedBase, CreatorBase):
+class NutritionalDayGoal(TimeStampedBase, CreatorBase):
     protein = models.PositiveIntegerField(default=0)
     carbohydrate = models.PositiveIntegerField(default=0)
     fat = models.PositiveIntegerField(default=0)
     calories = models.PositiveIntegerField(default=0)
     goal = models.ForeignKey(
-        Goal,
+        NutritionalGoal,
         on_delete=models.CASCADE
     )

@@ -37,12 +37,12 @@ class UrlBase(models.Model):
 
 
 class TimeStampedBase(models.Model):
-    created = models.DateTimeField(
+    created = models.DateField(
         _("Creation Date and Time"),
         auto_now_add=True,
     )
 
-    modified = models.DateTimeField(
+    modified = models.DateField(
         _("Modification Date and Time"),
         auto_now=True,
     )

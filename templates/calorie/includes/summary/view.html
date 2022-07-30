@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<h1 class="text-2xl font-bold dark:text-white pl-5">{% trans 'Relatório das refeições' %}</h1>
+<div id="date-picker" class="space-x-5 py-8">
+    <input type="text" name="start"
+           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    <span class="text-lg">{% trans 'Entre' %}</span>
+    <input type="text" name="end"
+           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+</div>
+<div id="meal-list">
+</div>
+
+{% block javascript %}
+    <script>
+        const elem = document.querySelector('#date-picker');
+        const dateRange = new DateRangePicker(elem, {
+            format: 'dd/mm/yyyy',
+        });
+
+        const endInput = document.querySelector('input[name="end"]')
+        const startInput = document.querySelector('input[name="start"]')
+        endInput.addEventListener('changeDate', () => {
+            let startDate = startInput.value
+            let endDate = endInput.value
+            htmx.ajax('GET', `{% url 'calorie:meal_list' %}?startDate=${startDate}&endDate=${endDate}`, '#meal-list')
+        })
+    </script>
+{% endblock %}
+
+

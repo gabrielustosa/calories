@@ -14,11 +14,6 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
-        .sidebar-shadow {
-            -webkit-box-shadow: 6px 5px 20px 5px rgba(0, 0, 0, 0.34);
-            box-shadow: 6px 5px 20px 5px rgba(0, 0, 0, 0.34);
-        }
     </style>
 {% endblock %}
 
@@ -26,8 +21,7 @@
 {% block content %}
     <div class="py-3">
         <ul class="flex justify-center text-xl font-bold text-gray-800 cursor-pointer dark:text-white">
-            <li class="hover:opacity-70 p-2 rounded-md"
-                hx-get="{% url 'calorie:meal_view' %}" hx-target="#content">
+            <li class="hover:opacity-70 p-2 rounded-md" _="on click call callMealView()">
                 <i class="fa-solid fa-apple-whole pr-2"></i>
                 {% trans 'Refeições' %}
             </li>
@@ -35,7 +29,8 @@
                 <i class="fa-solid fa-person-walking pr-2"></i>
                 {% trans 'Exercícios' %}
             </li>
-            <li class="hover:opacity-70 p-2 rounded-md">
+            <li class="hover:opacity-70 p-2 rounded-md"
+                hx-get="{% url 'calorie:food_summary' %}" hx-target="#content">
                 <i class="fa-solid fa-carrot pr-2"></i>
                 {% trans 'Relatório' %}
             </li>
@@ -65,35 +60,13 @@
         <div id="content" class="min-h-full mx-10">
         </div>
         <div class="flex">
-            <div class="w-full px-10 relative">
-                <h1 class="text-xl font-bold dark:text-white py-4">{% trans 'Meta nutricional' %}</h1>
-                <div class="space-y-8">
-                    <div class="bg-gray-200 h-3">
-                        <div id="protein" class="bg-red-500 h-3" style="width: 0"></div>
-                        <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
-                            <span>{% trans 'Proteínas' %}</span>
-                            <span id="protein-text"></span>
-                        </div>
-                    </div>
-                    <div class="bg-gray-200 h-3">
-                        <div id="carbohydrate" class="bg-green-600 h-3" style="width: 0"></div>
-                        <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
-                            <span>{% trans 'Carboidratos' %}</span>
-                            <span id="carbohydrate-text"></span>
-                        </div>
-                    </div>
-                    <div class="bg-gray-200 h-3">
-                        <div id="fat" class="bg-amber-400 h-3" style="width: 0"></div>
-                        <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
-                            <span>{% trans 'Gordura' %}</span>
-                            <span id="fat-text"></span>
-                        </div>
-                    </div>
+            <div class="flex flex-col w-full">
+                <div id="progress-spot-1">
+
                 </div>
-                <button class="m-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
-                        hx-get="{% url 'calorie:render_create_goal' %}" hx-target="#content">
-                    {% trans 'Nova meta' %}
-                </button>
+                <div id="progress-spot-2" class="mt-16">
+
+                </div>
             </div>
             <div>
                 <div class="relative">
@@ -129,7 +102,7 @@
                                 r="110"
                                 cx="123"
                                 cy="123"></circle>
-                        <circle id="water-circle"
+                        <circle id="water"
                                 class="text-sky-700"
                                 stroke="currentColor"
                                 stroke-width="10"
@@ -141,7 +114,7 @@
                     <div class="centered flex flex-col text-center dark:text-white">
                         <i class="bi bi-droplet-fill text-xl"></i>
                         <span class="text-lg font-medium">Água</span>
-                        <span class="text-sm">250ml/2.5L</span>
+                        <span class="text-sm">1ml/2.5L</span>
                     </div>
                 </div>
             </div>
@@ -152,19 +125,42 @@
 
 {% block javascript %}
     <script>
-        function setProgress(element, percent, total) {
-            let circle = document.querySelector(element);
-            let radius = circle.r.baseVal.value;
-            let circumference = radius * 2 * Math.PI;
+        function callMealView() {
+            htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content').then(() => {
+                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_nutritional' %}', '#progress-spot-1')
+                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-2')
+            })
+        }
 
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-            circle.style.strokeDashoffset = `${circumference}`;
+        callMealView()
+    </script>
+    <script>
+        function setProgress(element, percent, total) {
+            if (['#calories', '#water'].includes(element)) {
+                let circle = document.querySelector(element);
+                let radius = circle.r.baseVal.value;
+                let circumference = radius * 2 * Math.PI;
+
+                circle.style.strokeDasharray = `${circumference} ${circumference}`;
+                circle.style.strokeDashoffset = `${circumference}`;
+
+                if (percent > total) {
+                    percent = total
+                }
+
+                circle.style.strokeDashoffset = circumference - percent / total * circumference;
+                return
+            }
+
+            let progress_element = document.querySelector(element)
 
             if (percent > total) {
                 percent = total
             }
 
-            circle.style.strokeDashoffset = circumference - percent / total * circumference;
+            let value = (percent * 100) / total
+
+            progress_element.style.width = `${value}%`
         }
 
         function setProgressText(element, current, total) {
@@ -177,57 +173,29 @@
             text_element.innerText = `${current}/${total}`
         }
 
-        function setProgressGoal(element, current, total) {
-            let progress_element = document.querySelector(element)
-
-            if (current > total) {
-                current = total
-            }
-
-            let value = (current * 100) / total
-
-            progress_element.style.width = `${value}%`
-        }
-
-        setProgress('#calories', {{ total_calories|floatformat:'0' }}, {{ max_calories }});
-        setProgress('#water-circle', 500, 1000)
-
-        {% for element, goal in goal_info.items %}
-            setProgressText('{{ element }}-text', {{ goal.0 }}, {{ goal.1 }})
-            setProgressGoal('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
-        {% endfor %}
-
         function updateFood(food, amount) {
             fetch(`/food/nutritional_value/${food}?amount=${amount}`)
                 .then(response => response.json())
                 .then(response => {
-                    console.log(response)
                     let options = ['protein', 'carbohydrate', 'fat', 'calories']
-
                     if (response['protein'] === undefined) {
                         options = ['calories',]
                     }
-
                     for (let option of options) {
                         let current = response[`current-${option}`]
                         let total = response[`total-${option}`]
                         setProgressText(`#${option}-text`, current, total)
-
-                        if (option === 'calories') {
-                            setProgress(`#${option}`, current, total)
-                        } else {
-                            setProgressGoal(`#${option}`, current, total)
-                        }
-
+                        setProgress(`#${option}`, current, total)
                     }
-
                 })
         }
+
+        setProgress('#calories', {{ total_calories|floatformat:'0' }}, {{ max_calories }})
+        setProgress('#water', 500, 1000)
+
+        setProgressText('#calories-text', {{ total_calories|floatformat:'0' }}, {{ max_calories }})
     </script>
     <script>
-        htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content')
-
-
         const targetModal = document.querySelector('#modal');
 
         const modal = new Modal(targetModal)

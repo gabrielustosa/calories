@@ -13,3 +13,8 @@ def get_random_id():
     random_int = randint(20, 100)
     characters = string.digits + string.ascii_letters
     return ''.join(choice(characters) for _ in range(random_int))
+
+
+def convert_date(str_date):
+    day, month, year = str_date.split('/')
+    return f'{year}-{month}-{day}'

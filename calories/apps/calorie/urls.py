@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import view, views_food, views_goal, views_meal
+from .views import view, views_food, views_goal, views_meal, views_summary
 
 app_name = 'calorie'
 
@@ -22,6 +22,10 @@ urlpatterns = [
 
     path('goal/render/create/', views_goal.render_create_goal_view, name='render_create_goal'),
     path('goal/create/', views_goal.create_goal_view, name='create_goal'),
+    path('goal/render/bar/nutritional/', views_goal.render_goal_nutritional_bar, name='render_goal_bar_nutritional'),
+    path('goal/render/bar/body/', views_goal.render_goal_body_bar, name='render_goal_bar_body'),
 
+    path('summary/', views_summary.food_summary_view, name='food_summary'),
+    path('summary/meal_list/', views_summary.show_meal_in_range_view, name='meal_list'),
 
 ]

@@ -1,0 +1,32 @@
+{% load i18n %}
+
+<div class="px-10 w-full relative">
+    <h1 class="text-xl font-bold dark:text-white py-4">{% trans 'Meta corporal' %}</h1>
+    <div class="space-y-8">
+        <div class="bg-gray-200 h-3">
+            <div id="weight" class="bg-sky-500 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Peso' %}</span>
+                <span id="weight-text"></span>
+            </div>
+        </div>
+        <div class="bg-gray-200 h-3">
+            <div id="body-fat" class="bg-amber-400 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Gordura corporal' %}</span>
+                <span id="body-fat-text"></span>
+            </div>
+        </div>
+        <div class="bg-gray-200 h-3">
+            <div id="muscle" class="bg-green-400 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Massa muscular' %}</span>
+                <span id="muscle-text"></span>
+            </div>
+        </div>
+    </div>
+    <button class="m-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
+            hx-get="{% url 'calorie:render_create_goal' %}" hx-target="#content">
+        {% trans 'Nova meta' %}
+    </button>
+</div>

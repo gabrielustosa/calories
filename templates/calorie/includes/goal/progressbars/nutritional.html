@@ -1,0 +1,39 @@
+{% load i18n %}
+
+<div class="px-10 w-full relative">
+    <h1 class="text-xl font-bold dark:text-white py-4">{% trans 'Meta nutricional' %}</h1>
+    <div class="space-y-8">
+        <div class="bg-gray-200 h-3">
+            <div id="protein" class="bg-red-500 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Proteínas' %}</span>
+                <span id="protein-text"></span>
+            </div>
+        </div>
+        <div class="bg-gray-200 h-3">
+            <div id="carbohydrate" class="bg-green-600 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Carboidratos' %}</span>
+                <span id="carbohydrate-text"></span>
+            </div>
+        </div>
+        <div class="bg-gray-200 h-3">
+            <div id="fat" class="bg-amber-400 h-3" style="width: 0"></div>
+            <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
+                <span>{% trans 'Gordura' %}</span>
+                <span id="fat-text"></span>
+            </div>
+        </div>
+    </div>
+    <button class="m-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
+            hx-get="{% url 'calorie:render_create_goal' %}" hx-target="#content">
+        {% trans 'Nova meta' %}
+    </button>
+</div>
+
+<script>
+    {% for element, goal in goal_info.items %}
+        setProgressText('{{ element }}-text', {{ goal.0 }}, {{ goal.1 }})
+        setProgress('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
+    {% endfor %}
+</script>

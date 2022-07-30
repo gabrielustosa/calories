@@ -2,16 +2,14 @@ import ast
 
 from django import template
 
+from utils.nutritional import get_nutrient_value as get_nutrient_value_util
+
 register = template.Library()
 
 
 @register.filter()
 def get_nutrient_value(meal_food, name):
-    food = meal_food.food
-    food_nutrient = getattr(food, name)
-    food_amount = food.number_of_units
-    multiplier = meal_food.serving_amount / food_amount
-    return multiplier * food_nutrient
+    return get_nutrient_value_util(meal_food, name)
 
 
 @register.simple_tag
