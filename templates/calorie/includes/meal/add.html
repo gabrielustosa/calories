@@ -9,7 +9,7 @@
     <i class="bi bi-plus-lg"></i>
     {% trans 'Criar refeição' %}
 </button>
-<div class="flex space-x-10 py-5">
+<div class="flex flex-wrap gap-5 py-5">
     {% for meal in meals %}
         <div class="p-5 bg-gray-200 rounded-lg cursor-pointer space-x-3 text-xl"
              hx-get="{% url 'calorie:render_search_food' meal.id %}"
