@@ -50,7 +50,10 @@ def render_search_food_view(request, meal_id):
 def food_search_view(request, meal_id):
     search_term = request.POST.get('search')
 
-    foods = fat_secret.foods_search(search_term)
+    try:
+        foods = fat_secret.foods_search(search_term)
+    except KeyError:
+        foods = []
 
     custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
 
