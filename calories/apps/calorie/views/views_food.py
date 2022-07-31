@@ -44,7 +44,7 @@ def render_search_food_view(request, meal_id):
 
     day_meal = get_meal_day_goal_query(request.user, meal).first()
 
-    return render(request, 'calorie/includes/food/search_food.html', context={'day_meal': day_meal})
+    return render(request, 'calorie/includes/food/search.html', context={'day_meal': day_meal})
 
 
 def food_search_view(request, meal_id):
@@ -133,7 +133,7 @@ def info_food_view(request, food_id):
 
 def render_create_food_view(request):
     form = modelform_factory(Food, exclude=('food_id',))
-    return render(request, 'calorie/includes/food/create_food.html', context={'form': form})
+    return render(request, 'calorie/includes/food/create.html', context={'form': form})
 
 
 def create_food_view(request):

@@ -26,8 +26,8 @@ def render_progress_circle(request):
     total_water = get_max_water(goal)
 
     return render(request, 'calorie/includes/goal/progressbars/circle.html', context={
-        'total_calories': current_calories,
+        'current_calories': current_calories,
         'max_calories': max_calories,
-        'max_water': current_water,
+        'current_water': current_water,
         'total_water': total_water,
     })

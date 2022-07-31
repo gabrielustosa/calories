@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import view, views_food, views_goal, views_meal, views_summary
+from .views import view, views_food, views_goal, views_meal, views_summary, views_water
 
 app_name = 'calorie'
 
@@ -30,5 +30,9 @@ urlpatterns = [
 
     path('summary/', views_summary.food_summary_view, name='food_summary'),
     path('summary/meal_list/', views_summary.show_meal_in_range_view, name='meal_list'),
+
+    path('water/render/add/', views_water.render_add_water_view, name='render_add_water'),
+    path('water/add/', views_water.add_water_view, name='add_water'),
+
 
 ]
