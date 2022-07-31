@@ -1,15 +1,16 @@
 from typing import Dict
 
-nutritional_info = (
-    'calories', 'carbohydrate', 'protein', 'fat', 'food_name',
-    'saturated_fat', 'polyunsaturated_fat', 'monounsaturated_fat',
-    'trans_fat', 'cholesterol', 'sodium', 'potassium', 'fiber',
-    'sugar', 'added_sugars', 'vitamin_d', 'vitamin_a', 'food_id',
-    'vitamin_c', 'calcium', 'iron', 'number_of_units', 'measurement_description',
-)
+from django.utils.translation import gettext_lazy as _
 
 
 def parse_food_result(food_dict: Dict):
+    nutritional_info = (
+        'calories', 'carbohydrate', 'protein', 'fat', 'food_name',
+        'saturated_fat', 'polyunsaturated_fat', 'monounsaturated_fat',
+        'trans_fat', 'cholesterol', 'sodium', 'potassium', 'fiber',
+        'sugar', 'added_sugars', 'vitamin_d', 'vitamin_a', 'food_id',
+        'vitamin_c', 'calcium', 'iron', 'number_of_units', 'measurement_description',
+    )
     result = list()
 
     food_serving = food_dict['servings']['serving']
@@ -38,3 +39,49 @@ def get_food_calories(food):
         return total
     except AttributeError:
         return 0
+
+
+nutritional_values_translated = {
+    'fat': _('Gordura'),
+    'saturated_fat': _('Gordura Saturada'),
+    'polyunsaturated_fat': _('Gordura Polisaturada'),
+    'monounsaturated_fat': _('Gordura Monosaturada'),
+    'trans_fat': _('Gordura Trans'),
+    'cholesterol': _('Colesterol'),
+    'sodium': _('Sódio'),
+    'potassium': _('Potássio'),
+    'fiber': _('Fibra'),
+    'sugar': _('Açúcar'),
+    'added_sugars': _('Açúcares adicionais'),
+    'vitamin_d': _('Vítamina D'),
+    'vitamin_a': _('Vítamina A'),
+    'vitamin_c': _('Vítamina C'),
+    'calcium': _('Cálcio'),
+    'iron': _('Ferro'),
+    'water': _('Água'),
+    'protein': _('Proteína'),
+    'carbohydrate': _('Carboidrato'),
+    'calories': _('Calorias'),
+}
+
+
+def get_nutritional_translated(value):
+    return nutritional_values_translated[value]
+
+
+def get_nutritional_values(exclude=None):
+    if not exclude:
+        exclude = []
+    result = []
+    nutritional_info = (
+        'calories', 'carbohydrate', 'protein', 'fat',
+        'saturated_fat', 'polyunsaturated_fat', 'monounsaturated_fat',
+        'trans_fat', 'cholesterol', 'sodium', 'potassium', 'fiber',
+        'sugar', 'added_sugars', 'vitamin_d', 'vitamin_a',
+        'vitamin_c', 'calcium', 'iron',
+    )
+    for value in nutritional_info:
+        if value not in exclude:
+            result.append(value)
+
+    return result

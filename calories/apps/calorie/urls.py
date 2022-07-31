@@ -30,6 +30,8 @@ urlpatterns = [
 
     path('summary/', views_summary.food_summary_view, name='food_summary'),
     path('summary/meal_list/', views_summary.show_meal_in_range_view, name='meal_list'),
+    path('summary/nutritional_info/', views_summary.render_nutritional_info_view, name='summary_nutritional_info'),
+    path('summary/meal_info/<int:meal_id>/', views_summary.meal_info_view, name='summary_meal_info'),
 
     path('water/render/add/', views_water.render_add_water_view, name='render_add_water'),
     path('water/add/', views_water.add_water_view, name='add_water'),

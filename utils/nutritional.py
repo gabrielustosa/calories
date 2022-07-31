@@ -33,8 +33,7 @@ def get_user_day_nutrients(user, nutrients):
     for meal in meals:
         for meal_food in meal.foods.all():
             for nutrient in nutrients:
-                nutrient_value = get_nutrient_value(meal_food, nutrient)
-                result[nutrient] = result.get(nutrient, 0) + nutrient_value
+                result[nutrient] = result.get(nutrient, 0) + get_nutrient_value(meal_food, nutrient)
 
     return result
 
@@ -47,18 +46,15 @@ def get_nutrient_value(meal_food, name):
     return multiplier * food_nutrient
 
 
-def get_nutritional_day_goal_query(user, goal=None):
-    today = date.today()
-
-    if not goal:
-        goal = NutritionalGoal.objects.filter(creator=user, active=True).first()
+def get_nutritional_day_goal_query(user, datetime=None):
+    if not datetime:
+        datetime = date.today()
 
     return NutritionalDayGoal.objects.filter(
         creator=user,
-        created__year=today.year,
-        created__month=today.month,
-        created__day=today.day,
-        goal=goal,
+        created__year=datetime.year,
+        created__month=datetime.month,
+        created__day=datetime.day,
     )
 
 
@@ -86,9 +82,9 @@ def get_max_calories(user, goal):
     return max_calories
 
 
-def get_current_water(user, goal):
+def get_current_water(user):
     total_water = 0
-    goal_query = get_nutritional_day_goal_query(user, goal)
+    goal_query = get_nutritional_day_goal_query(user)
     if goal_query.exists():
         day_goal = goal_query.first()
         total_water = day_goal.water

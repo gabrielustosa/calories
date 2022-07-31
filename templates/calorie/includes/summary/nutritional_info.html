@@ -1,0 +1,14 @@
+{% load i18n calorie_filter %}
+
+<div class="px-10 w-full relative">
+    <h1 class="text-xl font-bold dark:text-white py-4">{% trans 'Valores Nutricionais' %}</h1>
+    <h5>{{ start_date|date:"d F Y" }} {% trans 'à' %} {{ end_date|date:"d F Y" }}</h5>
+    <div class="flex flex-wrap gap-5 justify-center pt-5">
+        {% for key, value in result.items %}
+            <div class="flex flex-col p-5 border border-gray-500 rounded-lg text-center">
+                <span>{{ key|get_nutritional_translated }}</span>
+                <span>{{ value|format_nutrient:key }}</span>
+            </div>
+        {% endfor %}
+    </div>
+</div>

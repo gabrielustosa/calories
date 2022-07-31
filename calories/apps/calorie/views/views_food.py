@@ -5,7 +5,7 @@ from django.shortcuts import render
 from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, NutritionalGoal
 from calories.apps.calorie.views.view import fat_secret
 from calories.apps.calorie.views.views_meal import meal_view
-from utils.food import parse_food_result
+from utils.food import parse_food_result, get_nutritional_values
 from utils.nutritional import get_nutritional_day_goal_query, get_meal_day_goal_query, get_nutrient_value
 from utils.utils import get_random_id
 
@@ -92,7 +92,7 @@ def get_food_nutritional_values(request, food_id):
     food = Food.objects.filter(id=food_id).first()
 
     goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
-    day_goal = get_nutritional_day_goal_query(request.user, goal).first()
+    day_goal = get_nutritional_day_goal_query(request.user).first()
 
     options = ('protein', 'carbohydrate', 'fat', 'calories')
 
@@ -120,15 +120,14 @@ def get_food_nutritional_values(request, food_id):
 def info_food_view(request, food_id):
     food = FoodMeal.objects.filter(id=food_id).first()
 
-    all_nutrients = {'fat': 'Gordura', 'saturated_fat': 'Gordura Saturada',
-                     'polyunsaturated_fat': 'Gordura Polisaturada', 'monounsaturated_fat': 'Gordura Monosaturada',
-                     'trans_fat': 'Gordura Trans', 'cholesterol': 'Colesterol', 'sodium': 'Sódio',
-                     'potassium': 'Potássio', 'fiber': 'Fibra', 'sugar': 'Açúcar',
-                     'added_sugars': 'Açúcares adicionais', 'vitamin_d': 'Vítamina D', 'vitamin_a': 'Vítamina A',
-                     'vitamin_c': 'Vítamina C', 'calcium': 'Cálcio', 'iron': 'Ferro'}
+    main_nutrients = ('calories', 'carbohydrate', 'protein')
+    other_nutrients = get_nutritional_values(exclude=main_nutrients)
 
-    return render(request, 'includes/modal/food_info_body.html',
-                  context={'meal_food': food, 'all_nutrients': all_nutrients})
+    return render(request, 'includes/modal/food_info_body.html', context={
+        'meal_food': food,
+        'main_nutrients': main_nutrients,
+        'other_nutrients': other_nutrients,
+    })
 
 
 def render_create_food_view(request):

@@ -18,17 +18,18 @@ def create_goal_view(request):
     del items['csrfmiddlewaretoken']
 
     goal = NutritionalGoal.objects.create(**items)
-    day_goal_query = get_nutritional_day_goal_query(request.user, goal)
 
-    if not day_goal_query.exists():
-        day_goal = NutritionalDayGoal.objects.create(goal=goal)
+    day_goal_query = get_nutritional_day_goal_query(request.user)
+    day_goal_query.delete()
 
-        nutrients = get_user_day_nutrients(request.user, ('protein', 'carbohydrate', 'fat', 'calories'))
+    day_goal = NutritionalDayGoal.objects.create(goal=goal)
 
-        for nutrient, nutrient_value in nutrients.items():
-            setattr(day_goal, nutrient, nutrient_value)
+    nutrients = get_user_day_nutrients(request.user, ('protein', 'carbohydrate', 'fat', 'calories'))
 
-        day_goal.save()
+    for nutrient, nutrient_value in nutrients.items():
+        setattr(day_goal, nutrient, nutrient_value)
+
+    day_goal.save()
 
     return redirect(reverse('calorie:home'))
 
@@ -40,7 +41,7 @@ def render_goal_nutritional_bar(request):
 
     goal_info = dict()
     if goal:
-        day_goal_query = get_nutritional_day_goal_query(request.user, goal)
+        day_goal_query = get_nutritional_day_goal_query(request.user)
 
         if day_goal_query.exists():
             day_goal = day_goal_query.first()

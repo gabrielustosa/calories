@@ -24,6 +24,7 @@
             let startDate = startInput.value
             let endDate = endInput.value
             htmx.ajax('GET', `{% url 'calorie:meal_list' %}?startDate=${startDate}&endDate=${endDate}`, '#meal-list')
+            htmx.ajax('GET', `{% url 'calorie:summary_nutritional_info' %}?startDate=${startDate}&endDate=${endDate}`, '#progress-spot-2')
         })
     </script>
 {% endblock %}

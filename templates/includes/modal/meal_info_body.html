@@ -2,7 +2,7 @@
 
 <div class="flex justify-between items-start p-4 rounded-t border-b">
     <h3 class="text-xl font-semibold text-gray-900">
-        {% trans 'Informações - ' %} {{ meal_food.food.food_name }}
+        {{ day_meal.meal.name }} - {{ day_meal.created }}
     </h3>
     <button modal-close
             class="text-gray-700 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
@@ -15,23 +15,32 @@
 </div>
 <div class="p-3 space-y-6">
     <div class="px-8">
-        <h1 class="py-5 text-xl font-bold">
-            {% trans 'Informações para ' %}
-            {{ meal_food.serving_amount|floatformat:'0' }} {{ meal_food.food.measurement_description }}
-        </h1>
         <div class="flex justify-center space-x-8 pb-8">
-            {% for nutrient in main_nutrients %}
+            {% for nutrient, value in result_main_nutrients.items %}
                 <div class="flex flex-col text-lg font-bold text-center border-2 border-gray-500 p-4">
                     <span>{{ nutrient|get_nutritional_translated }}</span>
-                    <span>{{ meal_food|get_nutrient_value:nutrient|format_nutrient:nutrient }}</span>
+                    <span>{{ value|format_nutrient:nutrient }}</span>
                 </div>
             {% endfor %}
         </div>
         <div class="pb-8">
             <h1 class="pb-6 text-xl font-bold">{% trans 'Informações adicionais' %}</h1>
             <div class="grid grid-cols-2 text-sm text-gray-600 gap-5">
-                {% for nutrient in other_nutrients %}
-                    <div>{{ nutrient|get_nutritional_translated }} - {{ meal_food|get_nutrient_value:nutrient|format_nutrient:nutrient }}</div>
+                {% for nutrient, value in result_other_nutrients.items %}
+                    <div>{{ nutrient|get_nutritional_translated }}
+                        <span>{{ value|format_nutrient:nutrient }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div>
+            <h1 class="text-xl font-bold">{% trans 'Metas nutricionais' %}</h1>
+            <div class="flex flex-wrap gap-5 justify-center pt-5 mx-auto" style="width: 80%">
+                {% for nutritional, span in nutritional_goal_values.items %}
+                    <div class="flex flex-col p-5 border border-gray-500 rounded-lg text-center">
+                        {{ nutritional|get_nutritional_translated }}
+                        {{ span|safe }}
+                    </div>
                 {% endfor %}
             </div>
         </div>

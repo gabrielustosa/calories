@@ -29,8 +29,7 @@
                 <i class="fa-solid fa-person-walking pr-2"></i>
                 {% trans 'Exercícios' %}
             </li>
-            <li class="hover:opacity-70 p-2 rounded-md"
-                hx-get="{% url 'calorie:food_summary' %}" hx-target="#content">
+            <li class="hover:opacity-70 p-2 rounded-md"  _="on click call callSummaryView()">
                 <i class="fa-solid fa-carrot pr-2"></i>
                 {% trans 'Relatório' %}
             </li>
@@ -82,6 +81,13 @@
                 })
                 htmx.ajax('GET', '{% url 'calorie:render_progress_circle' %}', '#progress-post-circle')
 
+            })
+        }
+
+        function callSummaryView() {
+            htmx.ajax('GET', '{% url 'calorie:food_summary' %}', '#content').then(() => {
+                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-1')
+                document.querySelector('#progress-spot-2').innerHTML = ''
             })
         }
 
@@ -140,13 +146,10 @@
         function formatWater(water) {
             let formatWater = ''
             if (water >= 1000) {
-                formatWater += (`${String(water).charAt(0)}L`)
+                formatWater += (`${String(water).charAt(0)}L `)
             }
             let hundred = water % 1000
             if (hundred > 0) {
-                if (formatWater !== '') {
-                    formatWater += (' ')
-                }
                 formatWater += (`${hundred}ml`)
             }
             if (formatWater === '') {

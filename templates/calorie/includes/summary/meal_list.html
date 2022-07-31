@@ -2,8 +2,10 @@
 
 <div>
     {% for meal in meals %}
-        <div class="p-5 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600">
-            <h1 class="text-lg font-bold">{% trans 'Refeição do dia' %} {{ meal.created }}</h1>
+        <div class="p-5 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600"
+             hx-get="{% url 'calorie:summary_meal_info' meal.id %}" hx-target="#modal-body">
+            <h1 class="text-lg font-bold">{% trans 'Refeição ' %}
+                ({{ meal.meal.name }}) {% trans ' do dia ' %} {{ meal.created }}</h1>
             <p class="py-2 text-sm text-gray-600">{% trans 'Clique para ver mais informações' %}</p>
         </div>
     {% endfor %}

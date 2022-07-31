@@ -22,7 +22,7 @@ def render_progress_circle(request):
     current_calories = get_current_calories(request.user)
     max_calories = get_max_calories(request.user, goal)
 
-    current_water = get_current_water(request.user, goal)
+    current_water = get_current_water(request.user)
     total_water = get_max_water(goal)
 
     return render(request, 'calorie/includes/goal/progressbars/circle.html', context={
