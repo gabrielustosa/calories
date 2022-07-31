@@ -6,35 +6,28 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from calories.apps.calorie.models import NutritionalGoal
-from utils.food import get_food_calories
-from utils.nutritional import get_user_day_meals, get_nutritional_day_goal_query
+from utils.nutritional import get_current_calories, get_max_calories, get_current_water, get_max_water
 
 fat_secret = Fatsecret(os.environ.get('CONSUMER_KEY'), os.environ.get('CONSUMER_SECRET'))
 
 
 @login_required
 def home_view(request):
-    meals = get_user_day_meals(request.user)
+    return render(request, 'calorie/home.html')
 
-    total_calories = sum(filter(None, [get_food_calories(meal) for meal in meals]))
-    max_calories = request.user.max_calories
 
-    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
+def render_progress_circle(request):
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
 
-    max_water = 0
-    total_water = 0
-    if goal:
-        max_calories = goal.calories
+    current_calories = get_current_calories(request.user)
+    max_calories = get_max_calories(request.user, goal)
 
-        max_water = goal.water
-        goal_query = get_nutritional_day_goal_query(request.user, goal)
-        if goal_query.exists():
-            day_goal = goal_query.first()
-            total_water = day_goal.water
+    current_water = get_current_water(request.user, goal)
+    total_water = get_max_water(goal)
 
-    return render(request, 'calorie/home.html', context={
-        'total_calories': total_calories,
+    return render(request, 'calorie/includes/goal/progressbars/circle.html', context={
+        'total_calories': current_calories,
         'max_calories': max_calories,
-        'max_water': max_water,
+        'max_water': current_water,
         'total_water': total_water,
     })

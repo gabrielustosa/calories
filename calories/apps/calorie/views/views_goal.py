@@ -12,16 +12,12 @@ def render_create_goal_view(request):
 
 
 def create_goal_view(request):
+    NutritionalGoal.objects.filter(creator=request.user).update(active=False)
+
     items = request.POST.dict()
     del items['csrfmiddlewaretoken']
 
-    last_goal = NutritionalGoal.objects.filter(creator=request.user).last()
-    if last_goal:
-        last_goal.active = False
-        last_goal.save()
-
     goal = NutritionalGoal.objects.create(**items)
-
     day_goal_query = get_nutritional_day_goal_query(request.user, goal)
 
     if not day_goal_query.exists():

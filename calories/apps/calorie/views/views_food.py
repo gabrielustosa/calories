@@ -6,7 +6,7 @@ from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, Nutritio
 from calories.apps.calorie.views.view import fat_secret
 from calories.apps.calorie.views.views_meal import meal_view
 from utils.food import parse_food_result
-from utils.nutritional import get_nutritional_day_goal_query, get_meal_day_goal_query
+from utils.nutritional import get_nutritional_day_goal_query, get_meal_day_goal_query, get_nutrient_value
 from utils.utils import get_random_id
 
 
@@ -25,17 +25,13 @@ def add_food_view(request, meal_id):
 
     day_meal.foods.add(food_meal)
 
-    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
-    day_goal = get_nutritional_day_goal_query(request.user, goal).first()
+    day_goal = get_nutritional_day_goal_query(request.user).first()
 
     if day_goal:
         options = ('protein', 'carbohydrate', 'fat', 'calories')
 
         for option in options:
-            food_nutrient = getattr(food, option)
-            food_amount = food.number_of_units
-            multiplier = int(serving_amount) / food_amount
-            total = (multiplier * food_nutrient) + getattr(day_goal, option)
+            total = get_nutrient_value(food_meal, option) + getattr(day_goal, option)
             setattr(day_goal, option, total)
 
         day_goal.save()
@@ -95,7 +91,7 @@ def render_food_unity(request, food_id, meal_id):
 def get_food_nutritional_values(request, food_id):
     food = Food.objects.filter(id=food_id).first()
 
-    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).last()
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
     day_goal = get_nutritional_day_goal_query(request.user, goal).first()
 
     options = ('protein', 'carbohydrate', 'fat', 'calories')
@@ -116,7 +112,6 @@ def get_food_nutritional_values(request, food_id):
 
         if day_goal:
             result[f'current-{option}'] = getattr(day_goal, option)
-
             result[f'total-{option}'] = getattr(goal, option)
 
     return JsonResponse(result)

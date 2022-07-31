@@ -13,13 +13,13 @@
 
 {% block javascript %}
     <script>
-        const elem = document.querySelector('#date-picker');
-        const dateRange = new DateRangePicker(elem, {
+        var elem = document.querySelector('#date-picker');
+        var dateRange = new DateRangePicker(elem, {
             format: 'dd/mm/yyyy',
         });
 
-        const endInput = document.querySelector('input[name="end"]')
-        const startInput = document.querySelector('input[name="start"]')
+        var endInput = document.querySelector('input[name="end"]')
+        var startInput = document.querySelector('input[name="start"]')
         endInput.addEventListener('changeDate', () => {
             let startDate = startInput.value
             let endDate = endInput.value

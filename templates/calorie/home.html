@@ -68,55 +68,7 @@
 
                 </div>
             </div>
-            <div>
-                <div class="relative">
-                    <svg class="w-64 h-64 mx-auto">
-                        <circle class="text-gray-300"
-                                stroke-width="10"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="110"
-                                cx="123"
-                                cy="123"></circle>
-                        <circle id="calories"
-                                class="text-amber-500"
-                                stroke="currentColor"
-                                stroke-width="10"
-                                fill="transparent"
-                                r="110"
-                                cx="123"
-                                cy="123"></circle>
-                    </svg>
-                    <div class="centered flex flex-col text-center dark:text-white">
-                        <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
-                        <span class="text-lg font-medium">{% trans 'Calorias' %}</span>
-                        <span id="calories-text" class="text-sm"></span>
-                    </div>
-                </div>
-                <div class="relative">
-                    <svg class="w-64 h-64 mx-auto">
-                        <circle class="text-gray-300"
-                                stroke-width="10"
-                                stroke="currentColor"
-                                fill="transparent"
-                                r="110"
-                                cx="123"
-                                cy="123"></circle>
-                        <circle id="water"
-                                class="text-sky-700"
-                                stroke="currentColor"
-                                stroke-width="10"
-                                fill="transparent"
-                                r="110"
-                                cx="123"
-                                cy="123"></circle>
-                    </svg>
-                    <div class="centered flex flex-col text-center dark:text-white">
-                        <i class="bi bi-droplet-fill text-xl"></i>
-                        <span class="text-lg font-medium">{% trans 'Água' %}</span>
-                        <span id="water-text" class="text-sm"></span>
-                    </div>
-                </div>
+            <div id="progress-post-circle">
             </div>
         </div>
     </div>
@@ -127,8 +79,11 @@
     <script>
         function callMealView() {
             htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content').then(() => {
-                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_nutritional' %}', '#progress-spot-1')
-                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-2')
+                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_nutritional' %}', '#progress-spot-1').then(() => {
+                    htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-2')
+                })
+                htmx.ajax('GET', '{% url 'calorie:render_progress_circle' %}', '#progress-post-circle')
+
             })
         }
 
@@ -162,10 +117,41 @@
             let text_element = document.querySelector(element);
             if (percent > total) {
                 let difference = percent - total
-                text_element.innerHTML = `<span class="text-red-500">${total}/${total} (+${difference})</span>`
+                let differenceColor = element === '#protein-text' ? 'text-green-500' : 'text-red-500'
+                text_element.innerHTML = `<span class="${differenceColor}">${total}/${total} (+${difference})</span>`
                 return
             }
             text_element.innerText = `${percent}/${total}`
+        }
+
+        function setProgressTextWater(percent, total) {
+            let formatPercent = formatWater(percent)
+            let formatTotal = formatWater(total)
+
+            let text_element = document.querySelector('#water-text');
+
+            text_element.innerText = `${formatPercent}/${formatTotal}`
+
+            if (percent > total) {
+                let difference = percent - total
+                let formatDifference = formatWater(difference)
+                text_element.innerHTML = `<span class="text-green-500">${formatTotal}/${formatTotal} (+${formatDifference})</span>`
+            }
+        }
+
+        function formatWater(water) {
+            let formatWater = ''
+            if (water >= 1000) {
+                formatWater += (`${String(water).charAt(0)}L`)
+            }
+            let hundred = water % 1000
+            if (hundred > 0) {
+                if (formatWater !== '') {
+                    formatWater += (' ')
+                }
+                formatWater += (`${hundred}ml`)
+            }
+            return formatWater
         }
 
         function updateFood(food, amount) {
@@ -184,12 +170,6 @@
                     }
                 })
         }
-
-        setProgress('#calories', {{ total_calories|floatformat:'0' }}, {{ max_calories }})
-        setProgress('#water', 500, 1000)
-
-        setProgressText('#calories-text', {{ total_calories|floatformat:'0' }}, {{ max_calories }})
-        setProgressText('#water-text', 300, 100)
     </script>
     <script>
         const targetModal = document.querySelector('#modal');

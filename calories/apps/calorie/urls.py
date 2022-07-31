@@ -6,6 +6,8 @@ app_name = 'calorie'
 
 urlpatterns = [
     path('', view.home_view, name='home'),
+    path('render/progress_circle/', view.render_progress_circle, name='render_progress_circle'),
+
     path('meal/view/', views_meal.meal_view, name='meal_view'),
     path('meal/add/', views_meal.add_meal_view, name='add_meal'),
     path('meal/render/create/', views_meal.render_create_meal_view, name='render_create_meal'),
@@ -23,6 +25,7 @@ urlpatterns = [
     path('goal/render/create/', views_goal.render_create_goal_view, name='render_create_goal'),
     path('goal/create/', views_goal.create_goal_view, name='create_goal'),
     path('goal/render/bar/nutritional/', views_goal.render_goal_nutritional_bar, name='render_goal_bar_nutritional'),
+    path('goal/render/bar/body/', views_goal.render_goal_body_bar, name='render_goal_bar_body'),
     path('goal/render/bar/body/', views_goal.render_goal_body_bar, name='render_goal_bar_body'),
 
     path('summary/', views_summary.food_summary_view, name='food_summary'),
