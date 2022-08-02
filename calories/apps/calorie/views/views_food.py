@@ -99,23 +99,24 @@ def get_food_nutritional_values(request, food_id):
 
     options = ('protein', 'carbohydrate', 'fat', 'calories')
 
-    if not goal:
-        options = ('calories',)
-
     amount = int(request.GET.get('amount'))
 
     result = dict()
-    for option in options:
-        food_nutrient = getattr(food, option)
-        food_amount = food.number_of_units
-        multiplier = amount / food_amount
-        total = multiplier * food_nutrient
+    if goal:
+        for option in options:
+            food_nutrient = getattr(food, option)
+            food_amount = food.number_of_units
+            multiplier = amount / food_amount
+            total = multiplier * food_nutrient
 
-        result[option] = total
+            result[option] = total
 
-        if day_goal:
-            result[f'current-{option}'] = getattr(day_goal, option)
-            result[f'total-{option}'] = getattr(goal, option)
+            if day_goal:
+                result[f'current-{option}'] = getattr(day_goal, option)
+                result[f'total-{option}'] = getattr(goal, option)
+
+    if not result:
+        result.update({'empty': True})
 
     return JsonResponse(result)
 

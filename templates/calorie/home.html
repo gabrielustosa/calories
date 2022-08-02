@@ -163,14 +163,13 @@
                 .then(response => response.json())
                 .then(response => {
                     let options = ['protein', 'carbohydrate', 'fat', 'calories']
-                    if (response['protein'] === undefined) {
-                        options = ['calories',]
-                    }
-                    for (let option of options) {
-                        let current = response[`current-${option}`]
-                        let total = response[`total-${option}`]
-                        setProgressText(`#${option}-text`, current, total)
-                        setProgress(`#${option}`, current, total)
+                    if (!response['empty']) {
+                        for (let option of options) {
+                            let current = response[`current-${option}`]
+                            let total = response[`total-${option}`]
+                            setProgressText(`#${option}-text`, current, total)
+                            setProgress(`#${option}`, current, total)
+                        }
                     }
                 })
         }

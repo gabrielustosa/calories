@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 
-from utils.utils import get_age
-
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -14,16 +12,6 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, username=email, **extra_fields)
         user.set_password(password)
-
-        weight = extra_fields['weight']
-        height = extra_fields['height']
-        age = get_age(extra_fields['birthday'])
-
-        if extra_fields['sex'] == 'M':
-            user.max_calories = (13.75 * weight) + (5 * height) - (6.76 * age) + 66.5
-        elif extra_fields['sex'] == 'F':
-            user.max_calories = (9.56 * weight) + (1.85 * height) - (4.68 * age) + 665
-
         user.save(using=self.db)
         return user
 
@@ -48,19 +36,11 @@ class User(AbstractUser):
     email = models.EmailField(_('E-mail'), unique=True)
     name = models.CharField(_('Name'), max_length=150)
     is_staff = models.BooleanField(_('Staff'), default=False)
-    height = models.PositiveIntegerField(_('Altura em cm'))
-    weight = models.IntegerField(_('Peso em kg'))
-    birthday = models.DateField()
-    max_calories = models.PositiveIntegerField(_('Meta de calorias'), default=0)
-    sex = models.CharField(max_length=2, choices=[
-        ('M', _('MASCULINO')),
-        ('F', _('FEMININO')),
-    ])
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'height', 'weight', 'birthday', 'sex']
+    REQUIRED_FIELDS = ['name', ]
 
     def get_url_profile(self):
         name_parts = self.name.split(' ')

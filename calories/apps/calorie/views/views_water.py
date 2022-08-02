@@ -9,6 +9,7 @@ def render_add_water_view(request):
 
 def add_water_view(request):
     goal = get_nutritional_day_goal_query(request.user).first()
-    goal.water = int(request.POST.get('water')) + goal.water
-    goal.save()
+    if goal:
+        goal.water = int(request.POST.get('water')) + goal.water
+        goal.save()
     return redirect('/')

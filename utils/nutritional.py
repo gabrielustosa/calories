@@ -55,6 +55,7 @@ def get_nutritional_day_goal_query(user, datetime=None):
         created__year=datetime.year,
         created__month=datetime.month,
         created__day=datetime.day,
+        goal__active=True,
     )
 
 
@@ -70,13 +71,15 @@ def get_meal_day_goal_query(user, meal):
     )
 
 
-def get_current_calories(user):
-    meals = get_user_day_meals(user)
-    return sum(filter(None, [get_food_calories(meal) for meal in meals]))
+def get_current_calories(user, goal):
+    if goal:
+        meals = get_user_day_meals(user)
+        return sum(filter(None, [get_food_calories(meal) for meal in meals]))
+    return 0
 
 
-def get_max_calories(user, goal):
-    max_calories = user.max_calories
+def get_max_calories(goal):
+    max_calories = 0
     if goal:
         max_calories = goal.calories
     return max_calories

@@ -19,8 +19,8 @@ def home_view(request):
 def render_progress_circle(request):
     goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
 
-    current_calories = get_current_calories(request.user)
-    max_calories = get_max_calories(request.user, goal)
+    current_calories = get_current_calories(request.user, goal)
+    max_calories = get_max_calories(goal)
 
     current_water = get_current_water(request.user)
     total_water = get_max_water(goal)

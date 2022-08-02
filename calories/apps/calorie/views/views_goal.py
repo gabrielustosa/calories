@@ -12,7 +12,7 @@ def render_create_goal_view(request):
 
 
 def create_goal_view(request):
-    NutritionalGoal.objects.filter(creator=request.user).update(active=False)
+    NutritionalGoal.objects.filter(creator=request.user, active=True).update(active=False)
 
     items = request.POST.dict()
     del items['csrfmiddlewaretoken']
