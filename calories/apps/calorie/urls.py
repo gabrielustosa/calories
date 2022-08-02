@@ -1,12 +1,19 @@
 from django.urls import path
 
-from .views import view, views_food, views_goal, views_meal, views_summary, views_water
+from .views import (
+    view,
+    views_food,
+    views_goal,
+    views_meal,
+    views_summary,
+    views_water,
+    views_progress_bar,
+)
 
 app_name = 'calorie'
 
 urlpatterns = [
     path('', view.home_view, name='home'),
-    path('render/progress_circle/', view.render_progress_circle, name='render_progress_circle'),
 
     path('meal/view/', views_meal.meal_view, name='meal_view'),
     path('meal/add/', views_meal.add_meal_view, name='add_meal'),
@@ -17,16 +24,12 @@ urlpatterns = [
     path('food/add/<int:meal_id>/', views_food.add_food_view, name='add_food'),
     path('food/search/<int:meal_id>/', views_food.food_search_view, name='food_search'),
     path('food/render/unity/<str:food_id>/<int:meal_id>/', views_food.render_food_unity, name='render_food_unity'),
-    path('food/nutritional_value/<int:food_id>/', views_food.get_food_nutritional_values, name='get_nutritional_value'),
     path('food/info/<int:food_id>/', views_food.info_food_view, name='food_info'),
     path('food/render/create/', views_food.render_create_food_view, name='render_create_food'),
     path('food/create/', views_food.create_food_view, name='create_food'),
 
     path('goal/render/create/', views_goal.render_create_goal_view, name='render_create_goal'),
     path('goal/create/', views_goal.create_goal_view, name='create_goal'),
-    path('goal/render/bar/nutritional/', views_goal.render_goal_nutritional_bar, name='render_goal_bar_nutritional'),
-    path('goal/render/bar/body/', views_goal.render_goal_body_bar, name='render_goal_bar_body'),
-    path('goal/render/bar/body/', views_goal.render_goal_body_bar, name='render_goal_bar_body'),
 
     path('summary/', views_summary.food_summary_view, name='food_summary'),
     path('summary/meal_list/', views_summary.show_meal_in_range_view, name='meal_list'),
@@ -36,5 +39,9 @@ urlpatterns = [
     path('water/render/add/', views_water.render_add_water_view, name='render_add_water'),
     path('water/add/', views_water.add_water_view, name='add_water'),
 
+    path('progress/render/calories/', views_progress_bar.render_progress_calories, name='render_calories_progress'),
+    path('progress/render/water/', views_progress_bar.render_progress_water, name='render_water_progress'),
+    path('progress/render/nutritional/', views_progress_bar.render_progress_nutritional, name='render_nutritional_progress'),
+    path('progress/render/body/', views_progress_bar.render_progress_body, name='render_body_progress'),
 
 ]

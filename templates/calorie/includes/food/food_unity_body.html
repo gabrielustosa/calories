@@ -15,14 +15,14 @@
 </div>
 <div class="p-3 space-y-6">
     <div class="px-8">
-        <form hx-post="{% url 'calorie:add_food' meal_id %}" hx-target="#content">
+        <div id="form-add-food" class="py-2">
             <div class="my-4">
                 <label for="units"
                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                     {% trans 'Selecione uma medida' %}
                 </label>
                 <select id="units"
-                        name="serving"
+                        name="food"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {% for id, measurement in food_info.items %}
                         <option value="{{ id }}">{{ measurement }}</option>
@@ -34,13 +34,27 @@
                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                     {% trans 'Quantidade' %}
                 </label>
-                <input type="text" id="amount" name="serving_amount"
+                <input type="text" id="amount" name="amount"
                        class="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs">
             </div>
-            <button modal-close type="submit" class="p-2 text-white bg-sky-600 rounded-lg w-full"
-                    _="on click wait 200ms then call updateFood(#units.value, #amount.value)">
+            <button modal-close class="p-2 text-white bg-sky-600 rounded-lg w-full"
+                    _="on click addFood()">
                 {% trans 'Adicionar' %}
             </button>
-        </form>
+        </div>
     </div>
 </div>
+
+{% block javascript %}
+    <script>
+        function addFood() {
+            let queryParams = getInputToQuery('#form-add-food')
+            fetch(`{% url 'calorie:add_food' meal_id %}${queryParams}`)
+                .then(response => response.json())
+                .then(response => {
+                    updateNutritionalProgress(response)
+                    updateCaloriesProgress(response)
+                })
+        }
+    </script>
+{% endblock %}

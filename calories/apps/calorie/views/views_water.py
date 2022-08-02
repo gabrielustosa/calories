@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.shortcuts import render
 
+from calories.apps.calorie.models import NutritionalGoal
 from utils.nutritional import get_nutritional_day_goal_query
 
 
@@ -8,8 +10,16 @@ def render_add_water_view(request):
 
 
 def add_water_view(request):
-    goal = get_nutritional_day_goal_query(request.user).first()
-    if goal:
-        goal.water = int(request.POST.get('water')) + goal.water
-        goal.save()
-    return redirect('/')
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
+    day_goal = get_nutritional_day_goal_query(request.user).first()
+    result = dict()
+    if day_goal:
+        day_goal.water = int(request.GET.get('water')) + day_goal.water
+        day_goal.save()
+        result['current-water'] = day_goal.water
+        result['total-water'] = goal.water
+
+    if not result:
+        result.update({'empty': True})
+
+    return JsonResponse(result)

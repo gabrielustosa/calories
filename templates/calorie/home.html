@@ -65,7 +65,9 @@
                 <div id="progress-spot-2" class="mt-16">
                 </div>
             </div>
-            <div id="progress-post-circle">
+            <div>
+                <div id="progress-calories"></div>
+                <div id="progress-water"></div>
             </div>
         </div>
     </div>
@@ -76,17 +78,19 @@
     <script>
         function callMealView() {
             htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content').then(() => {
-                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_nutritional' %}', '#progress-spot-1').then(() => {
-                    htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-2')
+                htmx.ajax('GET', '{% url 'calorie:render_nutritional_progress' %}', '#progress-spot-1').then(() => {
+                    htmx.ajax('GET', '{% url 'calorie:render_body_progress' %}', '#progress-spot-2').then(() => {
+                        htmx.ajax('GET', '{% url 'calorie:render_calories_progress' %}', '#progress-calories').then(() => {
+                            htmx.ajax('GET', '{% url 'calorie:render_water_progress' %}', '#progress-water')
+                        })
+                    })
                 })
-                htmx.ajax('GET', '{% url 'calorie:render_progress_circle' %}', '#progress-post-circle')
-
             })
         }
 
         function callSummaryView() {
             htmx.ajax('GET', '{% url 'calorie:food_summary' %}', '#content').then(() => {
-                htmx.ajax('GET', '{% url 'calorie:render_goal_bar_body' %}', '#progress-spot-1')
+                htmx.ajax('GET', '{% url 'calorie:render_body_progress' %}', '#progress-spot-1')
                 document.querySelector('#progress-spot-2').innerHTML = ''
             })
         }
@@ -158,20 +162,51 @@
             return formatWater
         }
 
-        function updateFood(food, amount) {
-            fetch(`/food/nutritional_value/${food}?amount=${amount}`)
-                .then(response => response.json())
-                .then(response => {
-                    let options = ['protein', 'carbohydrate', 'fat', 'calories']
-                    if (!response['empty']) {
-                        for (let option of options) {
-                            let current = response[`current-${option}`]
-                            let total = response[`total-${option}`]
-                            setProgressText(`#${option}-text`, current, total)
-                            setProgress(`#${option}`, current, total)
-                        }
-                    }
-                })
+        function updateNutritionalProgress(response) {
+            let options = ['protein', 'carbohydrate', 'fat']
+            if (!response['empty']) {
+                for (let option of options) {
+                    let current = response[`current-${option}`]
+                    let total = response[`total-${option}`]
+                    setProgressText(`#${option}-text`, current, total)
+                    setProgress(`#${option}`, current, total)
+                }
+            }
+        }
+
+        function updateCaloriesProgress(response) {
+            if (!response['empty']) {
+                setProgressText('#calories-text', response['current-calories'], response['total-calories'])
+                setProgress('#calories', response['current-calories'], response['total-calories'])
+            }
+        }
+
+        function updateWaterProgress(response) {
+            if (!response['empty']) {
+                setProgressTextWater(response['current-water'], response['total-water'])
+                setProgress('#water', response['current-water'], response['total-water'])
+            }
+        }
+
+        function getFormInputs(form) {
+            let inputs = form.querySelectorAll('input, textarea, select')
+            let values = {}
+            inputs.forEach(input => {
+                values[input.name] = input.value
+            })
+            return values
+        }
+
+        function getInputToQuery(element) {
+            let form = document.querySelector(element)
+            let values = getFormInputs(form)
+            let query = '?'
+            let count = 1
+            for (let [key, value] of Object.entries(values)) {
+                query += `${key}=${value}&`
+                count++
+            }
+            return query
         }
     </script>
     <script>

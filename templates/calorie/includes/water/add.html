@@ -1,13 +1,29 @@
 {% load i18n %}
 
 <h1 class="text-2xl font-bold py-4">{% trans 'Adicionando água' %}</h1>
-<form method="post" action="{% url 'calorie:add_water' %}">
-    {% csrf_token %}
+<div id="form-add-water">
     <div class="mb-6">
-        <label for="water" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{% trans 'Quantidade de Água' %}</label>
+        <label for="water"
+               class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">{% trans 'Quantidade de Água' %}</label>
         <input type="text" id="water" name="water"
                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                required>
     </div>
-    <button type="submit" class="rounded-lg bg-sky-700 text-white w-full py-1 px-3">{% trans 'Adicionar' %}</button>
-</form>
+    <button onclick="addWater()"
+            class="rounded-lg bg-sky-700 text-white w-full py-1 px-3">{% trans 'Adicionar' %}</button>
+</div>
+
+{% block javascript %}
+    <script>
+        function addWater() {
+            let queryParams = getInputToQuery('#form-add-water')
+            fetch(`{% url 'calorie:add_water' %}${queryParams}`)
+                .then(response => response.json())
+                .then(response => {
+                    htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content').then(() => {
+                        updateWaterProgress(response)
+                    })
+                })
+        }
+    </script>
+{% endblock %}

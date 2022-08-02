@@ -74,7 +74,7 @@ def meal_info_view(request, meal_id):
         span = f'<span>{day_goal_nutrient}/{goal_nutrient}</span>'
         nutritional_goal_values[option] = span
 
-    return render(request, 'includes/modal/meal_info_body.html', context={
+    return render(request, 'calorie/includes/summary/meal_info_body.html', context={
         'day_meal': day_meal,
         'result_main_nutrients': result_main_nutrients,
         'result_other_nutrients': result_other_nutrients,

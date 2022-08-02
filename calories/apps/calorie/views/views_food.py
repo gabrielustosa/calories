@@ -13,20 +13,22 @@ from utils.utils import get_random_id
 def add_food_view(request, meal_id):
     day_meal = DayMeal.objects.filter(id=meal_id).first()
 
-    food_id = request.POST.get('serving')
-    serving_amount = request.POST.get('serving_amount')
+    food_id = request.GET.get('food')
+    amount = request.GET.get('amount')
 
     food = Food.objects.filter(id=food_id).first()
 
     food_meal = FoodMeal.objects.create(
-        serving_amount=serving_amount,
+        serving_amount=amount,
         food=food,
     )
 
     day_meal.foods.add(food_meal)
 
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
     day_goal = get_nutritional_day_goal_query(request.user).first()
 
+    result = dict()
     if day_goal:
         options = ('protein', 'carbohydrate', 'fat', 'calories')
 
@@ -36,7 +38,17 @@ def add_food_view(request, meal_id):
 
         day_goal.save()
 
-    return render_search_food_view(request, day_meal.meal.id)
+        for option in options:
+            result[option] = round(get_nutrient_value(food_meal, option))
+
+            if day_goal:
+                result[f'current-{option}'] = round(getattr(day_goal, option))
+                result[f'total-{option}'] = round(getattr(goal, option))
+
+    if not result:
+        result.update({'empty': True})
+
+    return JsonResponse(result)
 
 
 def render_search_food_view(request, meal_id):
@@ -84,41 +96,11 @@ def render_food_unity(request, food_id, meal_id):
 
     food_info = {food.id: food.measurement_description for food in foods}
 
-    return render(request, 'includes/modal/food_unity_body.html', context={
+    return render(request, 'calorie/includes/food/food_unity_body.html', context={
         'food_id': food_id,
         'meal_id': meal_id,
         'food_info': food_info,
     })
-
-
-def get_food_nutritional_values(request, food_id):
-    food = Food.objects.filter(id=food_id).first()
-
-    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
-    day_goal = get_nutritional_day_goal_query(request.user).first()
-
-    options = ('protein', 'carbohydrate', 'fat', 'calories')
-
-    amount = int(request.GET.get('amount'))
-
-    result = dict()
-    if goal:
-        for option in options:
-            food_nutrient = getattr(food, option)
-            food_amount = food.number_of_units
-            multiplier = amount / food_amount
-            total = multiplier * food_nutrient
-
-            result[option] = total
-
-            if day_goal:
-                result[f'current-{option}'] = getattr(day_goal, option)
-                result[f'total-{option}'] = getattr(goal, option)
-
-    if not result:
-        result.update({'empty': True})
-
-    return JsonResponse(result)
 
 
 def info_food_view(request, food_id):
@@ -127,7 +109,7 @@ def info_food_view(request, food_id):
     main_nutrients = ('calories', 'carbohydrate', 'protein')
     other_nutrients = get_nutritional_values(exclude=main_nutrients)
 
-    return render(request, 'includes/modal/food_info_body.html', context={
+    return render(request, 'calorie/includes/food/food_info_body.html', context={
         'meal_food': food,
         'main_nutrients': main_nutrients,
         'other_nutrients': other_nutrients,
@@ -148,3 +130,7 @@ def create_food_view(request):
     Food.objects.create(**items)
 
     return meal_view(request)
+
+
+def remove_food_view(request, food_meal_id):
+    return JsonResponse({'status': 'ok'})

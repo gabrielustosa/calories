@@ -9,30 +9,6 @@
                 r="110"
                 cx="123"
                 cy="123"></circle>
-        <circle id="calories"
-                class="text-amber-500"
-                stroke="currentColor"
-                stroke-width="10"
-                fill="transparent"
-                r="110"
-                cx="123"
-                cy="123"></circle>
-    </svg>
-    <div class="centered flex flex-col text-center dark:text-white">
-        <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
-        <span class="text-lg font-medium">{% trans 'Calorias' %}</span>
-        <span id="calories-text" class="text-sm"></span>
-    </div>
-</div>
-<div class="relative">
-    <svg class="w-64 h-64 mx-auto">
-        <circle class="text-gray-300"
-                stroke-width="10"
-                stroke="currentColor"
-                fill="transparent"
-                r="110"
-                cx="123"
-                cy="123"></circle>
         <circle id="water"
                 class="text-sky-700"
                 stroke="currentColor"
@@ -57,9 +33,6 @@
 
 {% block javascript %}
     <script>
-        setProgress('#calories', {{ current_calories|floatformat:'0' }}, {{ max_calories }})
-        setProgressText('#calories-text', {{ current_calories|floatformat:'0' }}, {{ max_calories }})
-
         setProgress('#water', {{ current_water|floatformat:'0' }}, {{ total_water }})
         setProgressTextWater({{ current_water|floatformat:'0' }}, {{ total_water }})
     </script>

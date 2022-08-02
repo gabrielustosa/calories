@@ -34,7 +34,6 @@ class FoodMeal(models.Model):
     food = models.ForeignKey(
         Food,
         on_delete=models.CASCADE,
-        related_name='measurements'
     )
 
 

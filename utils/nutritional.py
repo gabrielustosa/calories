@@ -55,7 +55,6 @@ def get_nutritional_day_goal_query(user, datetime=None):
         created__year=datetime.year,
         created__month=datetime.month,
         created__day=datetime.day,
-        goal__active=True,
     )
 
 
