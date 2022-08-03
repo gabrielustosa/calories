@@ -16,7 +16,7 @@ def render_progress_calories(request):
     current_calories = get_current_calories(request.user, goal)
     max_calories = get_max_calories(goal)
 
-    return render(request, 'calorie/includes/goal/progressbars/calories.html', context={
+    return render(request, 'includes/progressbars/calories.html', context={
         'current_calories': current_calories,
         'max_calories': max_calories,
     })
@@ -28,7 +28,7 @@ def render_progress_water(request):
     current_water = get_current_water(request.user)
     total_water = get_max_water(goal)
 
-    return render(request, 'calorie/includes/goal/progressbars/water.html', context={
+    return render(request, 'includes/progressbars/water.html', context={
         'current_water': current_water,
         'total_water': total_water,
     })
@@ -55,8 +55,8 @@ def render_progress_nutritional(request):
         for option in options:
             goal_info[f'#{option}'] = [0, 0]
 
-    return render(request, 'calorie/includes/goal/progressbars/nutritional.html', context={'goal_info': goal_info})
+    return render(request, 'includes/progressbars/nutritional.html', context={'goal_info': goal_info})
 
 
 def render_progress_body(request):
-    return render(request, 'calorie/includes/goal/progressbars/body.html')
+    return render(request, 'includes/progressbars/body.html')

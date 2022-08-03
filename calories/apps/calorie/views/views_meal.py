@@ -8,12 +8,11 @@ from utils.nutritional import get_user_day_meals
 
 def meal_view(request):
     meals = get_user_day_meals(request.user)
-
     return render(request, 'calorie/includes/meal/view.html', context={'meals': meals})
 
 
 def add_meal_view(request):
-    meals = Meal.objects.filter(creator=request.user)
+    meals = Meal.objects.filter(creator=request.user).order_by('time')
     return render(request, 'calorie/includes/meal/add.html', context={'meals': meals})
 
 

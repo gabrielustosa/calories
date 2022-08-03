@@ -2,12 +2,12 @@ from datetime import date
 
 from django.db.models import F, Sum
 
-from calories.apps.calorie.models import DayMeal, Meal, NutritionalDayGoal, NutritionalGoal
+from calories.apps.calorie.models import DayMeal, Meal, NutritionalDayGoal
 from utils.food import get_food_calories
 
 
 def get_user_day_meals(user):
-    user_meals = Meal.objects.filter(creator=user)
+    user_meals = Meal.objects.filter(creator=user).order_by('time')
     meals = []
 
     for meal in user_meals.all():
@@ -71,10 +71,11 @@ def get_meal_day_goal_query(user, meal):
 
 
 def get_current_calories(user, goal):
+    current_calories = 0
     if goal:
-        meals = get_user_day_meals(user)
-        return sum(filter(None, [get_food_calories(meal) for meal in meals]))
-    return 0
+        day_goal = get_nutritional_day_goal_query(user).first()
+        current_calories = day_goal.calories
+    return current_calories
 
 
 def get_max_calories(goal):

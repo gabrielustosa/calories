@@ -201,10 +201,8 @@
             let form = document.querySelector(element)
             let values = getFormInputs(form)
             let query = '?'
-            let count = 1
             for (let [key, value] of Object.entries(values)) {
                 query += `${key}=${value}&`
-                count++
             }
             return query
         }

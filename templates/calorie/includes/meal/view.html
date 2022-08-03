@@ -48,9 +48,15 @@
                                     {% trans 'Clique para ver mais informações' %}
                                 </div>
                             </div>
-                            <div class="p-2 flex flex-col justify-center text-center space-y-2">
-                                <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
-                                <span>{{ meal_food|get_nutrient_value:'calories'|floatformat:'0' }}</span>
+                            <div class="flex space-x-10">
+                                <div class="p-2 flex flex-col justify-center text-center space-y-2 text-2xl text-red-500"
+                                     onclick="removeFood({{ meal_food.id }})">
+                                    <i class="bi bi-trash-fill py-3 self-start"></i>
+                                </div>
+                                <div class="p-2 flex flex-col justify-center text-center space-y-2">
+                                    <i class="fa-solid fa-fire-flame-curved fa-lg py-3"></i>
+                                    <span>{{ meal_food|get_nutrient_value:'calories'|floatformat:'0' }}</span>
+                                </div>
                             </div>
                         </div>
                     {% endwith %}
@@ -75,5 +81,15 @@
         ]
 
         var accordion = new Accordion(accordionItems)
+
+        function removeFood(food_meal_id) {
+            fetch(`/food/remove/${food_meal_id}/`)
+                .then(response => response.json())
+                .then(response => {
+                    htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content')
+                    updateCaloriesProgress(response)
+                    updateNutritionalProgress(response)
+                })
+        }
     </script>
 {% endblock %}

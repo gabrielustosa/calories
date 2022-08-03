@@ -7,7 +7,6 @@ from calories.apps.calorie.views.view import fat_secret
 from calories.apps.calorie.views.views_meal import meal_view
 from utils.food import parse_food_result, get_nutritional_values
 from utils.nutritional import get_nutritional_day_goal_query, get_meal_day_goal_query, get_nutrient_value
-from utils.utils import get_random_id
 
 
 def add_food_view(request, meal_id):
@@ -62,15 +61,12 @@ def render_search_food_view(request, meal_id):
 def food_search_view(request, meal_id):
     search_term = request.POST.get('search')
 
-    try:
-        foods = fat_secret.foods_search(search_term)
-    except KeyError:
-        foods = []
+    foods = []
 
     custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
 
     for custom_food in custom_foods.all():
-        food_description = f'Per {custom_food.measurement_description} {custom_food.number_of_units} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
+        food_description = f'Per {custom_food.number_of_units} {custom_food.measurement_description} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
         foods.append(
             {
                 'food_id': custom_food.food_id,
@@ -78,6 +74,11 @@ def food_search_view(request, meal_id):
                 'food_description': food_description,
             }
         )
+
+    try:
+        foods.extend(fat_secret.foods_search(search_term))
+    except KeyError:
+        pass
 
     return render(request, 'calorie/includes/food/search_result.html', context={'foods': foods, 'meal_id': meal_id})
 
@@ -125,12 +126,34 @@ def create_food_view(request):
     items = request.POST.dict()
     del items['csrfmiddlewaretoken']
 
-    items['food_id'] = get_random_id()
-
     Food.objects.create(**items)
 
     return meal_view(request)
 
 
 def remove_food_view(request, food_meal_id):
-    return JsonResponse({'status': 'ok'})
+    food = FoodMeal.objects.filter(id=food_meal_id).first()
+    day_meal = food.daymeal_set.first()
+
+    day_meal.foods.remove(food)
+
+    goal = NutritionalGoal.objects.filter(creator=request.user, active=True).first()
+    day_goal = get_nutritional_day_goal_query(request.user).first()
+
+    options = ('protein', 'carbohydrate', 'fat', 'calories')
+
+    for option in options:
+        total = getattr(day_goal, option) - get_nutrient_value(food, option)
+        setattr(day_goal, option, total)
+
+    day_goal.save()
+
+    result = dict()
+    for option in options:
+        result[option] = round(get_nutrient_value(food, option))
+
+        if day_goal:
+            result[f'current-{option}'] = round(getattr(day_goal, option))
+            result[f'total-{option}'] = round(getattr(goal, option))
+
+    return JsonResponse(result)

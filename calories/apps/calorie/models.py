@@ -1,10 +1,11 @@
 from django.db import models
 
 from calories.apps.core.models import CreatorBase, TimeStampedBase
+from utils.utils import get_random_id
 
 
 class Food(models.Model):
-    food_id = models.CharField(max_length=250)
+    food_id = models.CharField(max_length=250, null=True)
     food_name = models.CharField(max_length=100)
     calories = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
@@ -27,6 +28,11 @@ class Food(models.Model):
     iron = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     measurement_description = models.CharField(max_length=100)
     number_of_units = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.food_id:
+            self.food_id = get_random_id()
+        return super().save(*args, **kwargs)
 
 
 class FoodMeal(models.Model):
@@ -90,19 +96,19 @@ class DayMeal(CreatorBase, TimeStampedBase):
 
 
 class NutritionalGoal(CreatorBase):
-    protein = models.PositiveIntegerField(default=0)
-    carbohydrate = models.PositiveIntegerField(default=0)
-    fat = models.PositiveIntegerField(default=0)
-    calories = models.PositiveIntegerField(default=0)
+    protein = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    calories = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     water = models.PositiveIntegerField(default=0)
     active = models.BooleanField(default=True)
 
 
 class NutritionalDayGoal(TimeStampedBase, CreatorBase):
-    protein = models.PositiveIntegerField(default=0)
-    carbohydrate = models.PositiveIntegerField(default=0)
-    fat = models.PositiveIntegerField(default=0)
-    calories = models.PositiveIntegerField(default=0)
+    protein = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    carbohydrate = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    fat = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
+    calories = models.DecimalField(max_digits=15, decimal_places=2, null=True, default=0)
     water = models.PositiveIntegerField(default=0)
     goal = models.ForeignKey(
         NutritionalGoal,
