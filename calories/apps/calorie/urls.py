@@ -19,6 +19,11 @@ urlpatterns = [
     path('meal/add/', views_meal.add_meal_view, name='add_meal'),
     path('meal/render/create/', views_meal.render_create_meal_view, name='render_create_meal'),
     path('meal/create/', views_meal.create_meal_view, name='create_meal'),
+    path('meal/manage/', views_meal.manage_meal_view, name='manage_meal'),
+    path('meal/confirm/delete/<int:meal_id>/', views_meal.confirm_delete_view, name='confirm_remove_meal'),
+    path('meal/delete/<int:meal_id>/', views_meal.remove_meal_view, name='remove_meal'),
+    path('meal/render/edit/<int:meal_id>/', views_meal.render_edit_meal_view, name='render_edit_meal'),
+    path('meal/edit/<int:meal_id>/', views_meal.edit_meal_view, name='edit_meal'),
 
     path('food/render/search/<int:meal_id>', views_food.render_search_food_view, name='render_search_food'),
     path('food/add/<int:meal_id>/', views_food.add_food_view, name='add_food'),

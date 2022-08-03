@@ -1,0 +1,19 @@
+{% load i18n %}
+
+
+<h1 class="text-2xl font-bold dark:text-white pl-5">
+    {% trans 'Editando refeições' %}
+</h1>
+<div class="flex flex-wrap gap-5 py-5">
+    {% for meal in meals %}
+        <div class="flex p-5 bg-gray-200 rounded-lg cursor-pointer space-x-3 text-xl">
+            <span>{{ meal.get_icon|safe }}</span>
+            <span>{{ meal.name }}</span>
+            <i class="bi bi-pencil-fill"
+               hx-get="{% url 'calorie:render_edit_meal' meal.id %}" hx-target="#content"></i>
+            <i class="bi bi-trash-fill text-red-500"
+               hx-get="{% url 'calorie:confirm_remove_meal' meal.id %}" hx-target="#modal-body">
+            </i>
+        </div>
+    {% endfor %}
+</div>
