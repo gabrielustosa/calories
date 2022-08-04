@@ -41,7 +41,7 @@
     <script>
         {% for element, goal in goal_info.items %}
             setProgressTextBody('{{ element }}-text', {{ goal.0 }}, {{ goal.1 }})
-            setProgressBody('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
+            setProgress('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
         {% endfor %}
     </script>
 {% endblock %}
