@@ -114,3 +114,20 @@ class NutritionalDayGoal(TimeStampedBase, CreatorBase):
         NutritionalGoal,
         on_delete=models.CASCADE
     )
+
+
+class BodyGoal(CreatorBase):
+    weight = models.PositiveIntegerField(default=0)
+    fat_body = models.PositiveIntegerField(default=0)
+    muscle = models.PositiveIntegerField(default=0)
+    active = models.BooleanField(default=True)
+
+
+class BodyDayGoal(TimeStampedBase, CreatorBase):
+    weight = models.PositiveIntegerField(default=0)
+    fat_body = models.PositiveIntegerField(default=0)
+    muscle = models.PositiveIntegerField(default=0)
+    goal = models.ForeignKey(
+        BodyGoal,
+        on_delete=models.CASCADE
+    )

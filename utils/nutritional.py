@@ -2,7 +2,7 @@ from datetime import date
 
 from django.db.models import F, Sum
 
-from calories.apps.calorie.models import DayMeal, Meal, NutritionalDayGoal
+from calories.apps.calorie.models import DayMeal, Meal, NutritionalDayGoal, BodyDayGoal
 from utils.food import get_food_calories
 
 
@@ -51,6 +51,18 @@ def get_nutritional_day_goal_query(user, datetime=None):
         datetime = date.today()
 
     return NutritionalDayGoal.objects.filter(
+        creator=user,
+        created__year=datetime.year,
+        created__month=datetime.month,
+        created__day=datetime.day,
+    )
+
+
+def get_body_day_goal_query(user, datetime=None):
+    if not datetime:
+        datetime = date.today()
+
+    return BodyDayGoal.objects.filter(
         creator=user,
         created__year=datetime.year,
         created__month=datetime.month,

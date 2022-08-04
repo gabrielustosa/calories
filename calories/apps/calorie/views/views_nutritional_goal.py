@@ -7,7 +7,7 @@ from utils.nutritional import get_user_day_nutrients, get_nutritional_day_goal_q
 
 def render_create_goal_view(request):
     form = modelform_factory(NutritionalGoal, exclude=('goal', 'active'))
-    return render(request, 'calorie/includes/goal/create.html', context={'form': form})
+    return render(request, 'calorie/includes/nutritional_goal/render_create.html', context={'form': form})
 
 
 def create_goal_view(request):

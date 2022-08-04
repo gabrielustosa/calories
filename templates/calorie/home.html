@@ -125,10 +125,11 @@
             let text_element = document.querySelector(element);
             if (percent > total) {
                 let difference = percent - total
-                let differenceColor = element === '#protein-text' ? 'text-green-500' : 'text-red-500'
+                let differenceColor = ['#protein-text', '#muscle-text'].includes(element) ? 'text-green-500' : 'text-red-500'
                 text_element.innerHTML = `<span class="${differenceColor}">${total}/${total} (+${difference})</span>`
                 return
             }
+
             text_element.innerText = `${percent}/${total}`
         }
 
@@ -146,6 +147,23 @@
                 text_element.innerHTML = `<span class="text-green-500">${formatTotal}/${formatTotal} (+${formatDifference})</span>`
             }
         }
+
+        function setProgressTextBody(element, percent, total) {
+            if (element === '#weight-text') {
+                let text_element = document.querySelector(element);
+                let difference = percent > total ? percent - total : total - percent
+                let symbol = percent > total ? '-' : '+'
+                let differenceColor = symbol === '+' ? 'text-green-500' : 'text-red-500'
+                text_element.innerHTML = `<span class="${differenceColor}">${percent}/${total} (${symbol}${difference})</span>`
+                return
+            }
+            setProgressText(element, percent, total)
+        }
+
+        function setProgressBody(element, percent, total) {
+            setProgress(element, percent, total)
+        }
+
 
         function formatWater(water) {
             let formatWater = ''

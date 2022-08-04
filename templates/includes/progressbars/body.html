@@ -11,10 +11,10 @@
             </div>
         </div>
         <div class="bg-gray-200 h-3">
-            <div id="body-fat" class="bg-amber-400 h-3" style="width: 0"></div>
+            <div id="fat_body" class="bg-amber-400 h-3" style="width: 0"></div>
             <div class="flex justify-between text-sm text-gray-700 py-0.5 font-medium dark:text-white">
                 <span>{% trans 'Gordura Corporal' %}</span>
-                <span id="body-fat-text"></span>
+                <span id="fat_body-text"></span>
             </div>
         </div>
         <div class="bg-gray-200 h-3">
@@ -25,8 +25,23 @@
             </div>
         </div>
     </div>
-    <button class="m-10 rounded-lg bg-sky-700 text-white py-1 px-3 absolute right-0"
-            hx-get="{% url 'calorie:render_create_goal' %}" hx-target="#content">
-        {% trans 'Nova meta' %}
-    </button>
+    <div class="flex justify-end pt-10 space-x-5">
+        <button class="rounded-lg bg-sky-700 text-white py-1 px-3"
+                hx-get="{% url 'calorie:render_update_body_goal' %}" hx-target="#content">
+            {% trans 'Atualizar' %}
+        </button>
+        <button class="rounded-lg bg-sky-700 text-white py-1 px-3"
+                hx-get="{% url 'calorie:render_create_body_goal' %}" hx-target="#content">
+            {% trans 'Nova meta' %}
+        </button>
+    </div>
 </div>
+
+{% block javascript %}
+    <script>
+        {% for element, goal in goal_info.items %}
+            setProgressTextBody('{{ element }}-text', {{ goal.0 }}, {{ goal.1 }})
+            setProgressBody('{{ element }}', {{ goal.0 }}, {{ goal.1 }})
+        {% endfor %}
+    </script>
+{% endblock %}

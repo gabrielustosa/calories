@@ -1,8 +1,0 @@
-{% load i18n tailwind_filters %}
-
-<h1 class="text-2xl font-bold py-4">{% trans 'Criando meta' %}</h1>
-<form method="post" action="{% url 'calorie:create_goal' %}" >
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="rounded-lg bg-sky-700 text-white w-full py-1 px-3">Criar</button>
-</form>

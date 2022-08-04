@@ -3,11 +3,12 @@ from django.urls import path
 from .views import (
     view,
     views_food,
-    views_goal,
+    views_nutritional_goal,
     views_meal,
     views_summary,
     views_water,
     views_progress_bar,
+    views_body_goal
 )
 
 app_name = 'calorie'
@@ -34,8 +35,13 @@ urlpatterns = [
     path('food/create/', views_food.create_food_view, name='create_food'),
     path('food/remove/<int:food_meal_id>/', views_food.remove_food_view, name='remove_food'),
 
-    path('goal/render/create/', views_goal.render_create_goal_view, name='render_create_goal'),
-    path('goal/create/', views_goal.create_goal_view, name='create_goal'),
+    path('goal/nutritional/render/create/', views_nutritional_goal.render_create_goal_view, name='render_create_nutritional_goal'),
+    path('goal/nutritional/create/', views_nutritional_goal.create_goal_view, name='create_nutritional_goal'),
+
+    path('goal/body/render/create/', views_body_goal.render_create_body_goal, name='render_create_body_goal'),
+    path('goal/body/create/', views_body_goal.create_body_goal, name='create_body_goal'),
+    path('goal/body/render/update/', views_body_goal.render_update_body_goal, name='render_update_body_goal'),
+    path('goal/body/update/<int:goal_id>/', views_body_goal.update_body_goal, name='update_body_goal'),
 
     path('summary/', views_summary.food_summary_view, name='food_summary'),
     path('summary/meal_list/', views_summary.show_meal_in_range_view, name='meal_list'),
