@@ -25,10 +25,10 @@
                 <i class="fa-solid fa-apple-whole pr-2"></i>
                 {% trans 'Refeições' %}
             </li>
-            <li class="hover:opacity-70 p-2 rounded-md">
-                <i class="fa-solid fa-person-walking pr-2"></i>
-                {% trans 'Exercícios' %}
-            </li>
+{#            <li class="hover:opacity-70 p-2 rounded-md">#}
+{#                <i class="fa-solid fa-person-walking pr-2"></i>#}
+{#                {% trans 'Exercícios' %}#}
+{#            </li>#}
             <li class="hover:opacity-70 p-2 rounded-md"  _="on click call callSummaryView()">
                 <i class="fa-solid fa-carrot pr-2"></i>
                 {% trans 'Relatório' %}
@@ -149,7 +149,7 @@
         }
 
         function setProgressTextBody(element, percent, total) {
-            if (element === '#weight-text') {
+            if (['#weight-text', '#fat_body-text'].includes(element)) {
                 let text_element = document.querySelector(element);
                 let difference = percent > total ? percent - total : total - percent
                 let symbol = percent > total ? '-' : '+'
