@@ -66,7 +66,7 @@ def food_search_view(request, meal_id):
     custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
 
     for custom_food in custom_foods.all():
-        food_description = f'Per {custom_food.number_of_units} {custom_food.measurement_description} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat_body}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
+        food_description = f'Per {custom_food.number_of_units} {custom_food.measurement_description} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
         foods.append(
             {
                 'food_id': custom_food.food_id,
