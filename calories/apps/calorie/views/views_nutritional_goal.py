@@ -23,12 +23,11 @@ class CreateNutritionalGoal(TemplateView):
 
         day_goal = NutritionalDayGoal.objects.create(goal=goal)
 
-        nutrients = get_user_day_nutrients(request.user, ('protein', 'carbohydrate', 'fat', 'calories'))
+        options = ('protein', 'carbohydrate', 'fat', 'calories', 'water')
 
-        for nutrient, nutrient_value in nutrients.items():
-            setattr(day_goal, nutrient, nutrient_value)
+        for option in options:
+            setattr(day_goal, option, getattr(past_day_goal, option))
 
-        day_goal.water = past_day_goal.water
         day_goal.save()
         past_day_goal.delete()
 
