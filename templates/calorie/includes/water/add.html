@@ -17,7 +17,7 @@
     <script>
         function addWater() {
             let queryParams = getInputToQuery('#form-add-water')
-            fetch(`{% url 'calorie:add_water' %}${queryParams}`)
+            fetch(`{% url 'calorie:add_water' %}${queryParams}`, {method: 'POST'})
                 .then(response => response.json())
                 .then(response => {
                     htmx.ajax('GET', '{% url 'calorie:meal_view' %}', '#content').then(() => {

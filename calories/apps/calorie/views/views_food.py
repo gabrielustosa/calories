@@ -1,6 +1,7 @@
 from django.forms import modelform_factory
 from django.http import JsonResponse
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 from calories.apps.calorie.models import DayMeal, Meal, Food, FoodMeal, NutritionalGoal
 from calories.apps.calorie.views.view import fat_secret
@@ -50,37 +51,38 @@ def add_food_view(request, meal_id):
     return JsonResponse(result)
 
 
-def render_search_food_view(request, meal_id):
-    meal = Meal.objects.filter(id=meal_id).first()
+class SearchFoodView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        meal = Meal.objects.filter(id=self.kwargs.get('meal_id')).first()
 
-    day_meal = get_meal_day_goal_query(request.user, meal).first()
+        day_meal = get_meal_day_goal_query(request.user, meal).first()
 
-    return render(request, 'calorie/includes/food/search.html', context={'day_meal': day_meal})
+        return render(request, 'calorie/includes/food/search.html', context={'day_meal': day_meal})
 
+    def post(self, request, *args, **kwargs):
+        search_term = request.POST.get('search')
 
-def food_search_view(request, meal_id):
-    search_term = request.POST.get('search')
+        foods = []
 
-    foods = []
+        custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
 
-    custom_foods = Food.objects.filter(food_id__regex=r'[a-zA-Z]', food_name__icontains=search_term)
+        for custom_food in custom_foods.all():
+            food_description = f'Per {custom_food.number_of_units} {custom_food.measurement_description} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
+            foods.append(
+                {
+                    'food_id': custom_food.food_id,
+                    'food_name': custom_food.food_name,
+                    'food_description': food_description,
+                }
+            )
 
-    for custom_food in custom_foods.all():
-        food_description = f'Per {custom_food.number_of_units} {custom_food.measurement_description} - Calories: {custom_food.calories:.0f}kcal | Fat: {custom_food.fat}g | Carbs: {custom_food.carbohydrate}g | Protein: {custom_food.protein}g'
-        foods.append(
-            {
-                'food_id': custom_food.food_id,
-                'food_name': custom_food.food_name,
-                'food_description': food_description,
-            }
-        )
+        try:
+            foods.extend(fat_secret.foods_search(search_term))
+        except KeyError:
+            pass
 
-    try:
-        foods.extend(fat_secret.foods_search(search_term))
-    except KeyError:
-        pass
-
-    return render(request, 'calorie/includes/food/search_result.html', context={'foods': foods, 'meal_id': meal_id})
+        return render(request, 'calorie/includes/food/search_result.html',
+                      context={'foods': foods, 'meal_id': self.kwargs.get('meal_id')})
 
 
 def render_food_unity(request, food_id, meal_id):
@@ -117,18 +119,18 @@ def info_food_view(request, food_id):
     })
 
 
-def render_create_food_view(request):
-    form = modelform_factory(Food, exclude=('food_id',))
-    return render(request, 'calorie/includes/food/create.html', context={'form': form})
+class CreateFoodView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        form = modelform_factory(Food, exclude=('food_id',))
+        return render(request, 'calorie/includes/food/create.html', context={'form': form})
 
+    def post(self, request, *args, **kwargs):
+        items = request.POST.dict()
+        del items['csrfmiddlewaretoken']
 
-def create_food_view(request):
-    items = request.POST.dict()
-    del items['csrfmiddlewaretoken']
+        Food.objects.create(**items)
 
-    Food.objects.create(**items)
-
-    return meal_view(request)
+        return meal_view(request)
 
 
 def remove_food_view(request, food_meal_id):

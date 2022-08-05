@@ -10,9 +10,9 @@
             <span>{{ meal.get_icon|safe }}</span>
             <span>{{ meal.name }}</span>
             <i class="bi bi-pencil-fill"
-               hx-get="{% url 'calorie:render_edit_meal' meal.id %}" hx-target="#content"></i>
+               hx-get="{% url 'calorie:edit_meal' meal.id %}" hx-target="#content"></i>
             <i class="bi bi-trash-fill text-red-500"
-               hx-get="{% url 'calorie:confirm_remove_meal' meal.id %}" hx-target="#modal-body">
+               hx-get="{% url 'calorie:delete_meal' meal.id %}" hx-target="#modal-body">
             </i>
         </div>
     {% endfor %}

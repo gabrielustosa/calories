@@ -27,11 +27,11 @@
     </div>
     <div class="flex justify-end pt-10 space-x-5">
         <button class="rounded-lg bg-sky-700 text-white py-1 px-3"
-                hx-get="{% url 'calorie:render_update_body_goal' %}" hx-target="#content">
+                hx-get="{% url 'calorie:update_body_goal' %}" hx-target="#content">
             {% trans 'Atualizar' %}
         </button>
         <button class="rounded-lg bg-sky-700 text-white py-1 px-3"
-                hx-get="{% url 'calorie:render_create_body_goal' %}" hx-target="#content">
+                hx-get="{% url 'calorie:create_body_goal' %}" hx-target="#content">
             {% trans 'Nova meta' %}
         </button>
     </div>
