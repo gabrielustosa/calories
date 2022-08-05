@@ -19,8 +19,7 @@ class CreateNutritionalGoal(TemplateView):
 
         goal = NutritionalGoal.objects.create(**items)
 
-        day_goal_query = get_nutritional_day_goal_query(request.user)
-        day_goal_query.delete()
+        past_day_goal = get_nutritional_day_goal_query(request.user).first()
 
         day_goal = NutritionalDayGoal.objects.create(goal=goal)
 
@@ -29,6 +28,8 @@ class CreateNutritionalGoal(TemplateView):
         for nutrient, nutrient_value in nutrients.items():
             setattr(day_goal, nutrient, nutrient_value)
 
+        day_goal.water = past_day_goal.water
         day_goal.save()
+        past_day_goal.delete()
 
         return redirect('/')
