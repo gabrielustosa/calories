@@ -1,4 +1,3 @@
-import datetime
 from datetime import date, timedelta
 
 from django.shortcuts import render
@@ -43,7 +42,8 @@ def render_progress_nutritional(request):
 
     options = ('protein', 'carbohydrate', 'fat')
 
-    goal_info = dict()
+    goal_info = {f'#{option}': [0, 0] for option in options}
+
     if goal:
         day_goal_query = get_nutritional_day_goal_query(request.user)
 
@@ -55,10 +55,6 @@ def render_progress_nutritional(request):
         for option in options:
             goal_info[f'#{option}'] = [round(getattr(day_goal, option)), round(getattr(goal, option))]
 
-    if not goal_info:
-        for option in options:
-            goal_info[f'#{option}'] = [0, 0]
-
     return render(request, 'includes/progressbars/nutritional.html', context={'goal_info': goal_info})
 
 
@@ -67,7 +63,8 @@ def render_progress_body(request):
 
     options = ('weight', 'fat_body', 'muscle')
 
-    goal_info = dict()
+    goal_info = {f'#{option}': [0, 0] for option in options}
+
     if goal:
         day_goal_query = get_body_day_goal_query(request.user)
 
@@ -86,9 +83,5 @@ def render_progress_body(request):
 
         for option in options:
             goal_info[f'#{option}'] = [round(getattr(day_goal, option)), round(getattr(goal, option))]
-
-    if not goal_info:
-        for option in options:
-            goal_info[f'#{option}'] = [0, 0]
 
     return render(request, 'includes/progressbars/body.html', context={'goal_info': goal_info})
