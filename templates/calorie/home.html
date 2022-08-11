@@ -163,7 +163,7 @@
         function formatWater(water) {
             let formatWater = ''
             if (water >= 1000) {
-                formatWater += (`${water / 1000}L `)
+                formatWater += (`${String(water / 1000).split('.')[0]}L `)
             }
             let hundred = water % 1000
             if (hundred > 0) {
